@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# macOS Thumbnails
+Icon?
+
+# macOS Directory Metadata
+.Spotlight-V100
+.Trashes
+.fseventsd
+
+# macOS Resource Forks
+__MACOSX
