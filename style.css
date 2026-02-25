@@ -1,0 +1,798 @@
+/*
+ * Modern CSS Boilerplate
+ * A comprehensive foundation for web projects
+ *
+ * Features:
+ * - Modern CSS reset based on current best practices
+ * - HSL-based color system with light/dark mode support
+ * - Fluid responsive typography
+ * - CSS custom properties for easy theming
+ * - Google Fonts: Figtree (sans-serif) & Fira Code (monospace)
+ */
+
+/* =============================================================================
+   FONTS
+   ============================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap');
+
+/* =============================================================================
+   CSS RESET
+   ============================================================================= */
+
+/* Use border-box sizing for all elements */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margins */
+* {
+  margin: 0;
+}
+
+/* Links */
+a {
+  color: var(--link-color);
+  text-decoration: underline;
+  text-decoration-color: var(--link-underline-color);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 0.2s ease;
+}
+
+a:visited {
+  color: var(--link-visited-color);
+  text-decoration-color: var(--link-visited-underline-color);
+}
+
+a:hover {
+  color: var(--link-hover-color);
+  text-decoration-color: transparent;
+}
+
+/* Default anchor styles for links without classes */
+/* a:not([class]) {
+  text-decoration-skip-ink: auto;
+  color: currentColor;
+} */
+
+/* Extra scroll margin for anchor targets */
+:target {
+  scroll-margin-block: 5ex;
+}
+
+/* Enable smooth animations for modern browsers */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    interpolate-size: allow-keywords;
+  }
+}
+
+/* Prevent font size inflation on mobile devices */
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+/* Fluid base font size - scales with viewport width */
+:root {
+  font-size: 100%; /* 16px - mobile first */
+}
+
+@media (min-width: 36rem) { /* 576px */
+  :root {
+    font-size: 106.25%; /* 17px */
+  }
+}
+
+@media (min-width: 48rem) { /* 768px */
+  :root {
+    font-size: 112.5%; /* 18px */
+  }
+}
+
+@media (min-width: 64rem) { /* 1024px */
+  :root {
+    font-size: 118.75%; /* 19px */
+  }
+}
+
+@media (min-width: 80rem) { /* 1280px */
+  :root {
+    font-size: 125%; /* 20px */
+  }
+}
+
+@media (min-width: 96rem) { /* 1536px */
+  :root {
+    font-size: 131.25%; /* 21px */
+  }
+}
+
+/* Base body styles */
+body {
+  min-height: 100vh;
+  font-family: var(--ff);
+  font-optical-sizing: auto;
+  color: var(--text);
+  background-color: var(--bg-dark);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Responsive media elements */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Form elements inherit font styles */
+input, button, textarea, select {
+  font: inherit;
+}
+
+/* Prevent text overflow */
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+/* Tighter line-height for interactive elements */
+button, input, label {
+  line-height: 1.1;
+}
+
+/* Improved text wrapping for better readability */
+p {
+  text-wrap: pretty;
+}
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+}
+
+/* Ensure textareas have minimum height */
+textarea:not([rows]) {
+  min-height: 10em;
+}
+
+/* Remove default list styles for semantic lists */
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+}
+
+/* Isolate root elements to create stacking context */
+#root, #__next {
+  isolation: isolate;
+}
+
+/* =============================================================================
+   CUSTOM PROPERTIES
+   ============================================================================= */
+
+/* Typography and color variables */
+:root {
+  --ff: "Inter",system-ui,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,Helvetica,Arial,"Helvetica Neue",sans-serif,var(--ff-emoji);
+  --ff-serif: "Merriweather","Times New Roman",Times,Georgia,serif,var(--ff-emoji);
+  --ff-mono: "Fira Code",ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace,var(--ff-emoji);
+  --ff-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  /* Heading scale options (size/line-height):
+     Option 1 - Minor Third (1.2 ratio), more subtle:
+       h1: 2.488rem/1.2   h2: 2.074rem/1.25  h3: 1.728rem/1.3
+       h4: 1.44rem/1.4    h5: 1.2rem/1.4     h6: 1rem/1.4
+     Option 2 - Major Third (1.25 ratio), more contrast (current):
+       h1: 3.052rem/1.2   h2: 2.441rem/1.25  h3: 1.953rem/1.3
+       h4: 1.563rem/1.4   h5: 1.25rem/1.4    h6: 1rem/1.4
+  */
+  --h1: bold 3.052rem/1.2em var(--ff);
+  --h2: bold 2.441rem/1.25em var(--ff);
+  --h3: bold 1.953rem/1.3em var(--ff);
+  --h4: bold 1.563rem/1.4em var(--ff);
+  --h5: bold 1.25rem/1.4em var(--ff);
+  --h6: bold 1rem/1.4em var(--ff);
+  --p: 1rem/1.6em var(--ff-serif);
+  --p2: .875rem/1.5em var(--ff-serif);
+  --p3: italic .75rem/1.5em var(--ff-serif);
+  /* Spacing scale based on root font size */
+  --space-3xs: 0.25rem;  /* 4px at 16px base */
+  --space-2xs: 0.5rem;   /* 8px */
+  --space-xs: 0.75rem;   /* 12px */
+  --space-s: 1rem;       /* 16px */
+  --space-m: 1.5rem;     /* 24px */
+  --space-l: 2rem;       /* 32px */
+  --space-xl: 3rem;      /* 48px */
+  --space-2xl: 4rem;     /* 64px */
+  --space-3xl: 6rem;     /* 96px */
+  /* Prose-specific spacing (line-height based) */
+  --prose-line-height: 1.6;
+  --prose-rhythm: calc(1rem * var(--prose-line-height));  /* ~25.6px, scales with font */
+  --prose-space-paragraph: var(--prose-rhythm);
+  --prose-space-heading-above: calc(var(--prose-rhythm) * 1.5);
+  --prose-space-heading-below: calc(var(--prose-rhythm) * 0.5);
+  --prose-space-list-item: calc(var(--prose-rhythm) * 0.25);
+  --prose-space-block: var(--prose-rhythm);
+  /* Colors and shades */
+  --hue: 320;
+  --alt-hue: 220;
+  --tertiary-hue: calc(var(--hue) + 300);
+  --accent-hue: calc(var(--hue) + 60);
+  --primary-lightest: hsl(var(--hue),80%,95%);
+  --primary-light: hsl(var(--hue),80%,90%);
+  --primary-lighter: hsl(var(--hue),80%,70%);
+  --primary: hsl(var(--hue),80%,48%);
+  --primary-darker: hsl(var(--hue),80%,30%);
+  --primary-dark: hsl(var(--hue),80%,10%);
+  --primary-darkest: hsl(var(--hue),80%,5%);
+  --secondary-lightest: hsl(var(--alt-hue),80%,95%);
+  --secondary-light: hsl(var(--alt-hue),80%,90%);
+  --secondary-lighter: hsl(var(--alt-hue),80%,70%);
+  --secondary: hsl(var(--alt-hue),80%,50%);
+  --secondary-darker: hsl(var(--alt-hue),80%,30%);
+  --secondary-dark: hsl(var(--alt-hue),80%,10%);
+  --secondary-darkest: hsl(var(--alt-hue),80%,5%);
+  --badge-text-on-dark-bg: hsl(0, 0%, 100%);  /* white text for dark badge backgrounds (same in both modes) */
+  --shadow: 0px 2px 2px hsla(0, 0%, 0%, 0.07), 0px 4px 4px hsla(0, 0%, 0%, 0.15);
+  --shadow-s: inset 0 1px 2px #ffffff30, /* top highlight */
+              0 1px 2px #00000030, /* dark shadow */
+              0 2px 4px #00000015; /* soft shadow */
+  --shadow-m: inset 0 1px 2px #ffffff50, /* top highlight */
+              0 2px 4px #00000030, /* dark shadow */
+              0 4px 8px #00000015; /* soft shadow */
+  --shadow-l: inset 0 1px 2px #ffffff70, /* top highlight */
+              0 4px 6px #00000030, /* dark shadow */
+              0 6px 10px #00000015; /* soft shadow */
+}
+
+/* Dark mode color scheme */
+:root[data-theme=dark] {
+  --bg-dark: hsl(0, 0%, 0%);
+  --bg: hsl(0, 0%, 5%);
+  --bg-light: hsl(0, 0%, 10%);
+  --bg-blockquote: var(--primary-dark);
+  --text: hsl(0, 0%, 95%);
+  --text-muted: hsl(0, 0%, 70%);
+  --border: hsl(0, 0%, 30%);
+  --gradient: linear-gradient(0deg, var(--bg) 95%, var(--bg-light));
+  --gradient-hover: linear-gradient(0deg, var(--bg), var(--bg-light));
+  --alt-gradient: linear-gradient(0deg, var(--bg-light), var(--bg));
+  --alt-gradient-hover: linear-gradient(0deg, var(--bg-light) 95%, var(--bg));
+  --highlight: hsl(0, 0%, 60%);
+  --border-card: solid 1px var(--border);
+  --border-card-top: solid 1px var(--highlight);
+  --selection-bg: var(--secondary-dark);
+  --selection-text: var(--text);
+  --link-color: var(--primary);
+  --link-hover-color: hsl(from var(--primary) h s calc(l + 20));
+  --link-underline-color: var(--primary);
+  --link-underline-hover-color: hsl(from var(--primary) h s calc(l + 20));
+  --link-visited-color: hsl(from var(--primary) h calc(s - 20) l);
+  --link-visited-underline-color: hsl(from var(--primary) h calc(s - 20) l);
+  --badge-text-on-light-bg: hsl(0, 0%, 0%);  /* black text for light badge backgrounds in dark mode */
+  /* TODO: Take a look at tertiary and accent colors later */
+  /* --tertiary-color: hsl(var(--tertiary-hue), 80%, 80%);
+  --accent-color: hsl(var(--accent-hue), 80%, 80%); */
+}
+
+/* Light mode color scheme */
+:root[data-theme=light] {
+  --bg-dark: hsl(0, 0%, 90%);
+  --bg: hsl(0, 0%, 95%);
+  --bg-light: hsl(0, 0%, 100%);
+  --bg-blockquote: var(--primary-lightest);
+  --text: hsl(0, 0%, 5%);
+  --text-muted: hsl(0, 0%, 30%);
+  --border: hsl(0, 0%, 70%);
+  --gradient: linear-gradient(0deg, var(--bg) 95%, var(--bg-light));
+  --gradient-hover: linear-gradient(0deg, var(--bg), var(--bg-light));
+  --alt-gradient: linear-gradient(0deg, var(--bg-light), var(--bg));
+  --alt-gradient-hover: linear-gradient(0deg, var(--bg-light) 95%, var(--bg));
+  --highlight: hsl(0, 0%, 100%);
+  --border-card: solid 1px var(--bg);
+  --border-card-top: solid 1px var(--highlight);
+  --selection-bg: var(--secondary-light);
+  --selection-text: var(--text);
+  --link-color: var(--primary);
+  --link-hover-color: hsl(from var(--primary) h s calc(l - 20));
+  --link-underline-color: var(--primary);
+  --link-underline-hover-color: hsl(from var(--primary) h s calc(l - 20));
+  --link-visited-color: hsl(from var(--primary) h calc(s + 20) l);
+  --link-visited-underline-color: hsl(from var(--primary) h calc(s + 20) l);
+  --badge-text-on-light-bg: hsl(0, 0%, 5%);  /* near-black text for light badge backgrounds in light mode */
+  /* TODO: Take a look at tertiary and accent colors later */
+  /* --tertiary-color: hsl(var(--tertiary-hue), 80%, 20%);
+  --accent-color: hsl(var(--accent-hue), 80%, 20%); */
+}
+
+/* =============================================================================
+   TYPOGRAPHY
+   ============================================================================= */
+
+/* Headings */
+h1 {
+  font: var(--h1);
+}
+
+h2 {
+  font: var(--h2);
+}
+
+h3 {
+  font: var(--h3);
+}
+
+h4 {
+  font: var(--h4);
+}
+
+h5 {
+  font: var(--h5);
+}
+
+h6 {
+  font: var(--h6);
+}
+
+/* Paragraphs */
+p {
+  font: var(--p);
+}
+
+/* Small text */
+small,
+.text-small {
+  font: var(--p2);
+}
+
+/* Monospace elements - base styling */
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--ff-mono);
+  font-size: .875rem;
+}
+
+/* Inline code */
+code {
+  /* background-color: var(--secondary-light); */
+  color: var(--primary);
+  padding: var(--space-3xs) var(--space-2xs);
+  border-radius: 3px;
+}
+
+/* Keyboard input */
+kbd {
+  background-color: var(--secondary-light);
+  color: var(--secondary-darker);
+  padding: var(--space-3xs) var(--space-2xs);
+  border-radius: 3px;
+  border: 1px solid var(--border);
+}
+
+/* Code blocks */
+pre {
+  background-color: var(--primary-darkest);
+  color: var(--secondary-lighter);
+  padding: var(--space-m);
+  border-radius: 6px;
+  overflow-x: auto;
+  line-height: 1.5;
+  border: var(--border-card);
+}
+
+/* Code inside pre shouldn't have double styling */
+pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* =============================================================================
+   SPACING & VERTICAL RHYTHM
+   ============================================================================= */
+
+/* Base: all block elements get bottom margin */
+p, ul, ol, pre, blockquote, h1, h2, h3, h4, h5, h6, figure, hr, table {
+  margin-block-end: var(--space-m);
+}
+
+/* Headings have less bottom margin to stay close to their content */
+h1, h2, h3, h4, h5, h6 {
+  margin-block-end: var(--space-s);
+}
+
+/* Lists use serif font to match body text */
+ul, ol {
+  font-family: var(--ff-serif);
+}
+
+/* List item spacing */
+li + li {
+  margin-block-start: var(--space-xs);
+}
+
+/* Blockquote styling */
+blockquote {
+  background-color: var(--bg-blockquote);
+  border-inline-start: 4px solid var(--primary);
+  border-radius: .25rem;
+  padding: var(--space-m);
+  font-family: var(--ff-serif);
+}
+
+blockquote cite {
+  display: block;
+  margin-block-start: var(--space-s);
+  color: var(--text-muted);
+  font-style: italic;
+  /* text-align: right; */
+}
+
+/* =============================================================================
+   PROSE - LONG-FORM CONTENT
+   ============================================================================= */
+
+/* Base prose class for blog posts and articles */
+.prose {
+  line-height: var(--prose-line-height);
+}
+
+/* Paragraphs: single line gap between them */
+.prose p {
+  margin-block-start: 0;
+  margin-block-end: var(--prose-space-paragraph);
+}
+
+.prose p + p {
+  margin-block-start: 0;
+}
+
+/* Headings: more space above, less below to stay connected to content */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  margin-block-end: var(--prose-space-heading-below);
+}
+
+.prose * + h2 {
+  margin-block-start: calc(var(--prose-rhythm) * 2);
+}
+
+.prose * + h3,
+.prose * + h4,
+.prose * + h5,
+.prose * + h6 {
+  margin-block-start: var(--prose-space-heading-above);
+}
+
+/* Lists: match paragraph rhythm, tighter item spacing */
+.prose ul,
+.prose ol {
+  margin-block-start: 0;
+  margin-block-end: var(--prose-space-paragraph);
+}
+
+.prose * + ul,
+.prose * + ol {
+  margin-block-start: 0;
+}
+
+.prose li {
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+.prose li + li {
+  margin-block-start: var(--prose-space-list-item);
+}
+
+/* Nested lists */
+.prose li > ul,
+.prose li > ol {
+  margin-block-start: var(--prose-space-list-item);
+  margin-block-end: 0;
+}
+
+/* Blockquotes: one line above and below */
+.prose blockquote {
+  margin-block-start: var(--prose-space-block);
+  margin-block-end: var(--prose-space-block);
+}
+
+.prose blockquote p:last-child {
+  margin-block-end: 0;
+}
+
+/* Code blocks: one line above and below */
+.prose pre {
+  margin-block-start: var(--prose-space-block);
+  margin-block-end: var(--prose-space-block);
+}
+
+/* Figures: one line above and below */
+.prose figure {
+  margin-block-start: var(--prose-space-block);
+  margin-block-end: var(--prose-space-block);
+}
+
+.prose figcaption {
+  margin-block-start: var(--prose-space-list-item);
+  font: var(--p2);
+  color: var(--text-muted);
+}
+
+/* Horizontal rules: two lines above and below */
+.prose hr {
+  margin-block-start: calc(var(--prose-rhythm) * 2);
+  margin-block-end: calc(var(--prose-rhythm) * 2);
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+/* First/last child: remove outer margins */
+.prose > :first-child {
+  margin-block-start: 0;
+}
+
+.prose > :last-child {
+  margin-block-end: 0;
+}
+
+/* -----------------------------------------------------------------------------
+   Prose Variants
+   ----------------------------------------------------------------------------- */
+
+/* Compact variant for micro posts - tighter spacing */
+.prose--compact {
+  --prose-space-paragraph: calc(var(--prose-rhythm) * 0.75);
+  --prose-space-heading-above: var(--prose-rhythm);
+  --prose-space-heading-below: calc(var(--prose-rhythm) * 0.25);
+}
+
+/* Photo variant - larger spacing around figures, centered captions */
+.prose--photo figure {
+  margin-block-start: calc(var(--prose-rhythm) * 1.5);
+  margin-block-end: calc(var(--prose-rhythm) * 1.5);
+}
+
+.prose--photo figcaption {
+  font: var(--p3);
+  text-align: center;
+}
+
+/* Link post variant - heading as link, compact commentary */
+.prose--link > h2:first-child a,
+.prose--link > h3:first-child a {
+  text-decoration-thickness: 3px;
+}
+
+.prose--link > h2:first-child,
+.prose--link > h3:first-child {
+  margin-block-end: calc(var(--prose-rhythm) * 0.5);
+}
+
+.prose--link > p {
+  color: var(--text-muted);
+  font: var(--p2);
+}
+
+/* =============================================================================
+   BADGES
+   ============================================================================= */
+
+/* Base badge styles */
+.badge {
+  display: inline-block;
+  padding: 0.35em 0.65em;
+  font-family: var(--ff);
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25rem;
+}
+
+/* Pill badge modifier */
+.badge-pill {
+  border-radius: 50rem;
+}
+
+/* -----------------------------------------------------------------------------
+   Solid Badge Color Variants
+   ----------------------------------------------------------------------------- */
+
+/* Primary color badges */
+.badge-primary-lightest {
+  background-color: var(--primary-lightest);
+  color: var(--badge-text-on-light-bg);
+}
+
+.badge-primary-light {
+  background-color: var(--primary-light);
+  color: var(--badge-text-on-light-bg);
+}
+
+.badge-primary-lighter {
+  background-color: var(--primary-lighter);
+  color: var(--badge-text-on-light-bg);
+}
+
+.badge-primary {
+  background-color: var(--primary);
+  color: var(--badge-text-on-dark-bg);
+}
+
+.badge-primary-darker {
+  background-color: var(--primary-darker);
+  color: var(--badge-text-on-dark-bg);
+}
+
+.badge-primary-dark {
+  background-color: var(--primary-dark);
+  color: var(--badge-text-on-dark-bg);
+}
+
+.badge-primary-darkest {
+  background-color: var(--primary-darkest);
+  color: var(--badge-text-on-dark-bg);
+}
+
+/* Secondary color badges */
+.badge-secondary-lightest {
+  background-color: var(--secondary-lightest);
+  color: var(--badge-text-on-light-bg);
+}
+
+.badge-secondary-light {
+  background-color: var(--secondary-light);
+  color: var(--badge-text-on-light-bg);
+}
+
+.badge-secondary-lighter {
+  background-color: var(--secondary-lighter);
+  color: var(--badge-text-on-light-bg);
+}
+
+.badge-secondary {
+  background-color: var(--secondary);
+  color: var(--badge-text-on-dark-bg);
+}
+
+.badge-secondary-darker {
+  background-color: var(--secondary-darker);
+  color: var(--badge-text-on-dark-bg);
+}
+
+.badge-secondary-dark {
+  background-color: var(--secondary-dark);
+  color: var(--badge-text-on-dark-bg);
+}
+
+.badge-secondary-darkest {
+  background-color: var(--secondary-darkest);
+  color: var(--badge-text-on-dark-bg);
+}
+
+/* -----------------------------------------------------------------------------
+   Outline Badge Variants
+   ----------------------------------------------------------------------------- */
+
+/* Primary outline badges */
+.badge-outline-primary-lightest {
+  background-color: transparent;
+  border: 1px solid var(--primary-lightest);
+  color: var(--primary-lightest);
+}
+
+.badge-outline-primary-light {
+  background-color: transparent;
+  border: 1px solid var(--primary-light);
+  color: var(--primary-light);
+}
+
+.badge-outline-primary-lighter {
+  background-color: transparent;
+  border: 1px solid var(--primary-lighter);
+  color: var(--primary-lighter);
+}
+
+.badge-outline-primary {
+  background-color: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+
+.badge-outline-primary-darker {
+  background-color: transparent;
+  border: 1px solid var(--primary-darker);
+  color: var(--primary-darker);
+}
+
+.badge-outline-primary-dark {
+  background-color: transparent;
+  border: 1px solid var(--primary-dark);
+  color: var(--primary-dark);
+}
+
+.badge-outline-primary-darkest {
+  background-color: transparent;
+  border: 1px solid var(--primary-darkest);
+  color: var(--primary-darkest);
+}
+
+/* Secondary outline badges */
+.badge-outline-secondary-lightest {
+  background-color: transparent;
+  border: 1px solid var(--secondary-lightest);
+  color: var(--secondary-lightest);
+}
+
+.badge-outline-secondary-light {
+  background-color: transparent;
+  border: 1px solid var(--secondary-light);
+  color: var(--secondary-light);
+}
+
+.badge-outline-secondary-lighter {
+  background-color: transparent;
+  border: 1px solid var(--secondary-lighter);
+  color: var(--secondary-lighter);
+}
+
+.badge-outline-secondary {
+  background-color: transparent;
+  border: 1px solid var(--secondary);
+  color: var(--secondary);
+}
+
+.badge-outline-secondary-darker {
+  background-color: transparent;
+  border: 1px solid var(--secondary-darker);
+  color: var(--secondary-darker);
+}
+
+.badge-outline-secondary-dark {
+  background-color: transparent;
+  border: 1px solid var(--secondary-dark);
+  color: var(--secondary-dark);
+}
+
+.badge-outline-secondary-darkest {
+  background-color: transparent;
+  border: 1px solid var(--secondary-darkest);
+  color: var(--secondary-darkest);
+}
+
+/* -----------------------------------------------------------------------------
+   Badge Focus States
+   ----------------------------------------------------------------------------- */
+
+/* Focus styles for interactive badges (links, buttons) */
+a.badge:focus-visible,
+button.badge:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* =============================================================================
+   ACCESSIBILITY
+   ============================================================================= */
+
+/* Visible focus styles for keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Text selection highlighting */
+::selection {
+  background-color: var(--selection-bg);
+  color: var(--selection-text);
+}

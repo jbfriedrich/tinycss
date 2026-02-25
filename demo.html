@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS Boilerplate Demo</title>
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    /* Demo-specific styles */
+    .container {
+      max-width: 65ch;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    .color-swatch {
+      display: inline-block;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border);
+      vertical-align: middle;
+      margin-right: 0.5rem;
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .color-card {
+      padding: 1rem;
+      border: var(--border-card);
+      border-radius: 0.5rem;
+      background: var(--bg-light);
+      box-shadow: var(--shadow);
+    }
+
+    .demo-section {
+      margin: 3rem 0;
+      padding: 2rem;
+      background: var(--bg);
+      border-radius: 0.5rem;
+      border: var(--border-card);
+      border-top: var(--border-card-top);
+      box-shadow: var(--shadow);
+    }
+
+    .gradient-showcase {
+      margin: 3rem 0;
+      padding: 2rem;
+      background: var(--gradient);
+      border-radius: 0.5rem;
+      border: var(--border-card);
+      border-top: var(--border-card-top);
+      box-shadow: var(--shadow);
+      transition: background 0.3s ease;
+    }
+
+    .gradient-showcase:hover {
+      background: var(--gradient-hover);
+    }
+
+    [data-theme="light"] .gradient-showcase:hover {
+      background: var(--gradient);
+    }
+
+    .button {
+      padding: 0.5em 1em;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: inherit;
+    }
+
+    .button:hover {
+      background: var(--primary-darker);
+    }
+
+    .button-secondary {
+      background: var(--secondary);
+    }
+
+    .button-secondary:hover {
+      background: var(--secondary-darker);
+    }
+
+    div {
+      margin-block-end: var(--space-s);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header style="text-align: center; margin-bottom: 3rem;">
+      <h1>CSS Boilerplate Demo</h1>
+      <p>Modern CSS with HSL colors, fluid typography, and light/dark mode</p>
+
+      <button class="button" onclick="toggleTheme()">
+        Toggle Theme
+      </button>
+    </header>
+
+    <main>
+      <!-- Typography Showcase -->
+      <section class="demo-section">
+        <h2>Typography Scale</h2>
+        <p>Fluid typography that scales from 16px (mobile) to 21px (large screens)</p>
+
+        <h1>Heading 1 - Main Title</h1>
+        <h2>Heading 2 - Section Title</h2>
+        <h3>Heading 3 - Subsection</h3>
+        <h4>Heading 4 - Minor Heading</h4>
+        <h5>Heading 5 - Small Heading</h5>
+        <h6>Heading 6 - Smallest Heading</h6>
+
+        <p>This is a paragraph with regular body text. The quick brown fox jumps over the lazy dog. Typography creates <strong>hierarchy</strong> and establishes <em>rhythm</em> in your design.</p>
+
+        <p><small>This is small text using the text-small class or small element.</small></p>
+
+        <p style="font: var(--p3);">This is p3 text - italic serif at 0.75rem, useful for captions and metadata.</p>
+      </section>
+
+      <!-- Color Palette -->
+      <section class="demo-section">
+        <h2>Color System</h2>
+        <p>HSL-based colors with hue rotation. Current hue: <strong>320 (Magenta)</strong></p>
+
+        <h3>Primary Colors</h3>
+        <div class="color-grid">
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--primary-lightest);"></span>
+            <div>
+              <strong>Primary Lightest</strong>
+              <br><code>var(--primary-lightest)</code>
+            </div>
+          </div>
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--primary-light);"></span>
+            <div>
+              <strong>Primary Light</strong>
+              <br><code>var(--primary-light)</code>
+            </div>
+          </div>
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--primary-lighter);"></span>
+            <div>
+              <strong>Primary Lighter</strong>
+              <br><code>var(--primary-lighter)</code>
+            </div>
+          </div>
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--primary);"></span>
+            <div>
+              <strong>Primary</strong>
+              <br><code>var(--primary)</code>
+            </div>
+          </div>
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--primary-darker);"></span>
+            <div>
+              <strong>Primary Darker</strong>
+              <br><code>var(--primary-darker)</code>
+            </div>
+          </div>
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--primary-dark);"></span>
+            <div>
+              <strong>Primary Dark</strong>
+              <br><code>var(--primary-dark)</code>
+            </div>
+          </div>
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--primary-darkest);"></span>
+            <div>
+              <strong>Primary Darkest</strong>
+              <br><code>var(--primary-darkest)</code>
+            </div>
+          </div>
+        </div>
+
+        <h3>Secondary Colors</h3>
+        <div class="color-grid">
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--secondary-lightest);"></span>
+            <div>
+              <strong>Secondary Lightest</strong>
+              <br><code>var(--secondary-lightest)</code>
+            </div>
+          </div>
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--secondary-light);"></span>
+            <div>
+              <strong>Secondary Light</strong>
+              <br><code>var(--secondary-light)</code>
+            </div>
+          </div>
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--secondary-lighter);"></span>
+            <div>
+              <strong>Secondary Lighter</strong>
+              <br><code>var(--secondary-lighter)</code>
+            </div>
+          </div>
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--secondary);"></span>
+            <div>
+              <strong>Secondary</strong>
+              <br><code>var(--secondary)</code>
+            </div>
+          </div>
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--secondary-darker);"></span>
+            <div>
+              <strong>Secondary Darker</strong>
+              <br><code>var(--secondary-darker)</code>
+            </div>
+          </div>
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--secondary-dark);"></span>
+            <div>
+              <strong>Secondary Dark</strong>
+              <br><code>var(--secondary-dark)</code>
+            </div>
+          </div>
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--secondary-darkest);"></span>
+            <div>
+              <strong>Secondary Darkest</strong>
+              <br><code>var(--secondary-darkest)</code>
+            </div>
+          </div>
+        </div>
+
+        <h3>Theme Colors</h3>
+        <div class="color-grid">
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--bg-dark);"></span>
+            <div>
+              <strong>BG Dark</strong>
+              <br><code>var(--bg-dark)</code>
+            </div>
+          </div>
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--bg);"></span>
+            <div>
+              <strong>BG</strong>
+              <br><code>var(--bg)</code>
+            </div>
+          </div>
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--bg-light);"></span>
+            <div>
+              <strong>BG Light</strong>
+              <br><code>var(--bg-light)</code>
+            </div>
+          </div>
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--text); border-color: var(--text-muted);"></span>
+            <div>
+              <strong>Text</strong>
+              <br><code>var(--text)</code>
+            </div>
+          </div>
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--text-muted);"></span>
+            <div>
+              <strong>Text Muted</strong>
+              <br><code>var(--text-muted)</code>
+            </div>
+          </div>
+          <div class="color-card">
+            <span class="color-swatch" style="background: var(--border);"></span>
+            <div>
+              <strong>Border</strong>
+              <br><code>var(--border)</code>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Interactive Elements -->
+      <section class="demo-section">
+        <h2>Buttons & Interactive Elements</h2>
+
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <button class="button">Primary Button</button>
+          <button class="button button-secondary">Secondary Button</button>
+        </div>
+
+        <p>Try tabbing through the page to see the focus styles in action!</p>
+      </section>
+
+      <!-- Badges -->
+      <section class="demo-section">
+        <h2>Badges</h2>
+        <p>Bootstrap-inspired badges with all primary and secondary color variants</p>
+
+        <h3>Solid Badges - Primary Colors</h3>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+          <span class="badge badge-primary-lightest">Lightest</span>
+          <span class="badge badge-primary-light">Light</span>
+          <span class="badge badge-primary-lighter">Lighter</span>
+          <span class="badge badge-primary">Primary</span>
+          <span class="badge badge-primary-darker">Darker</span>
+          <span class="badge badge-primary-dark">Dark</span>
+          <span class="badge badge-primary-darkest">Darkest</span>
+        </div>
+
+        <h3>Solid Badges - Secondary Colors</h3>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+          <span class="badge badge-secondary-lightest">Lightest</span>
+          <span class="badge badge-secondary-light">Light</span>
+          <span class="badge badge-secondary-lighter">Lighter</span>
+          <span class="badge badge-secondary">Secondary</span>
+          <span class="badge badge-secondary-darker">Darker</span>
+          <span class="badge badge-secondary-dark">Dark</span>
+          <span class="badge badge-secondary-darkest">Darkest</span>
+        </div>
+
+        <h3>Pill Badges</h3>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+          <span class="badge badge-pill badge-primary-lighter">99+</span>
+          <span class="badge badge-pill badge-primary">12</span>
+          <span class="badge badge-pill badge-primary-darker">4</span>
+          <span class="badge badge-pill badge-secondary-lighter">New</span>
+          <span class="badge badge-pill badge-secondary">Beta</span>
+          <span class="badge badge-pill badge-secondary-darker">v2.0</span>
+        </div>
+
+        <h3>Outline Badges</h3>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+          <span class="badge badge-outline-primary">Draft</span>
+          <span class="badge badge-outline-primary-lighter">Pending</span>
+          <span class="badge badge-outline-secondary">Review</span>
+          <span class="badge badge-outline-secondary-darker">Approved</span>
+          <span class="badge badge-pill badge-outline-primary">Tag</span>
+          <span class="badge badge-pill badge-outline-secondary">Label</span>
+        </div>
+
+        <h3>Badges in Context</h3>
+        <h4>In Headings <span class="badge badge-primary">New</span></h4>
+        <h5>Subheading <span class="badge badge-secondary-lighter">Featured</span></h5>
+
+        <p style="margin-top: 1rem;">
+          This is a paragraph with inline badges: <span class="badge badge-primary-lighter">Important</span>
+          and <span class="badge badge-outline-secondary">Optional</span> content.
+        </p>
+
+        <p>
+          <strong>Tags:</strong>
+          <span class="badge badge-pill badge-outline-primary">JavaScript</span>
+          <span class="badge badge-pill badge-outline-primary">CSS</span>
+          <span class="badge badge-pill badge-outline-secondary">Design</span>
+          <span class="badge badge-pill badge-outline-secondary">Tutorial</span>
+        </p>
+      </section>
+
+      <!-- Code & Monospace -->
+      <section class="demo-section">
+        <h2>Code & Monospace Elements</h2>
+        <p>Inline code: <code>const example = "Hello World";</code></p>
+
+        <p>Keyboard input: Press <kbd>Cmd</kbd> + <kbd>K</kbd> to continue</p>
+
+        <p>Code block:</p>
+        <pre><code>function greet(name) {
+  return `Hello, ${name}!`;
+}
+
+console.log(greet("World"));</code></pre>
+      </section>
+
+      <!-- Text Formatting -->
+      <section class="demo-section">
+        <h2>Text Formatting</h2>
+        <p>This paragraph demonstrates various text formatting options:</p>
+        <ul>
+          <li><strong>Bold text</strong> for emphasis</li>
+          <li><em>Italic text</em> for stress</li>
+          <li><mark>Highlighted text</mark> for marking</li>
+          <li><del>Deleted text</del> for strikethrough</li>
+          <li><ins>Inserted text</ins> for additions</li>
+          <li><small>Small text</small> for fine print</li>
+          <li>Mathematical: E = mc<sup>2</sup> and H<sub>2</sub>O</li>
+        </ul>
+
+        <blockquote>
+          <p>The best design is the simplest one that works. Good design is as little design as possible. Less, but better - because it concentrates on the essential aspects, and the products are not burdened with non-essentials. Back to purity, back to simplicity.</p>
+          <cite>Dieter Rams</cite>
+        </blockquote>
+      </section>
+
+      <!-- Shadow System -->
+      <section class="demo-section">
+        <h2>Shadow System</h2>
+        <p>Three levels of shadows with inset highlights for depth</p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+          <div style="padding: 2rem; background: var(--bg-light); border-radius: 0.5rem; box-shadow: var(--shadow-s);">
+            <h4 style="margin-bottom: 0.5rem;">Small Shadow</h4>
+            <code>var(--shadow-s)</code>
+            <p style="font-size: 0.875rem; color: var(--text-muted);">Subtle elevation for cards and panels</p>
+          </div>
+
+          <div style="padding: 2rem; background: var(--bg-light); border-radius: 0.5rem; box-shadow: var(--shadow-m);">
+            <h4 style="margin-bottom: 0.5rem;">Medium Shadow</h4>
+            <code>var(--shadow-m)</code>
+            <p style="font-size: 0.875rem; color: var(--text-muted);">Moderate elevation for modals and dropdowns</p>
+          </div>
+
+          <div style="padding: 2rem; background: var(--bg-light); border-radius: 0.5rem; box-shadow: var(--shadow-l);">
+            <h4 style="margin-bottom: 0.5rem;">Large Shadow</h4>
+            <code>var(--shadow-l)</code>
+            <p style="font-size: 0.875rem; color: var(--text-muted);">Strong elevation for floating elements</p>
+          </div>
+        </div>
+
+        <p><small>Each shadow includes an inset top highlight for a subtle 3D effect</small></p>
+      </section>
+
+      <!-- Links -->
+      <section class="demo-section">
+        <h2>Links</h2>
+        <p>Regular links: <a href="#">This is a link</a></p>
+        <p>Visited link: <a href="#visited">Already visited</a></p>
+        <p>Focus-visible styles appear when using keyboard navigation (Tab key)</p>
+      </section>
+
+      <!-- Customization Guide -->
+      <section class="demo-section">
+        <h2>Customization</h2>
+        <h3>Change Colors by Hue</h3>
+        <p>Edit the <code>--hue</code> variable in <code>:root</code> to change the entire color scheme:</p>
+        <pre><code>:root {
+  --hue: 320; /* Try: 0 (red), 120 (green), 240 (blue) */
+}</code></pre>
+
+        <h3>Theme Variables</h3>
+        <p>Set <code>data-theme="light"</code> or <code>data-theme="dark"</code> on the <code>&lt;html&gt;</code> element to control the theme.</p>
+      </section>
+
+      <!-- Prose Demo: Blog Post -->
+      <section class="demo-section">
+        <h2>Prose: Blog Post Example</h2>
+        <p>The <code>.prose</code> class provides line-height-based vertical rhythm for long-form content.</p>
+
+        <article class="prose" style="margin-top: 2rem; padding: 2rem; background: var(--bg-light); border-radius: 0.5rem;">
+          <h2>The Art of Readable Typography</h2>
+
+          <p>Good typography is invisible. When readers are fully immersed in a text, they don't notice the typeface, the line spacing, or the margins. They simply absorb the content. This is the goal every designer should strive for.</p>
+
+          <p>Yet achieving this invisibility requires deliberate, careful choices. Every element of typographic design plays a role in either enhancing or hindering readability. The spacing between paragraphs, the relationship between headings and body text, and the rhythm of the page all contribute to the reading experience.</p>
+
+          <h3>The Importance of Vertical Rhythm</h3>
+
+          <p>Vertical rhythm refers to the consistent spacing patterns that guide the eye down the page. When text follows a predictable rhythm, readers can focus on the content rather than consciously parsing the layout.</p>
+
+          <p>Consider these principles:</p>
+
+          <ul>
+            <li>Paragraph spacing should relate to line height</li>
+            <li>Headings need more space above than below</li>
+            <li>List items require tighter spacing than paragraphs</li>
+            <li>Block elements like quotes need visual separation</li>
+          </ul>
+
+          <p>By basing all spacing on a single unit (the line height), we create harmony throughout the document.</p>
+
+          <blockquote>
+            <p>Typography is the craft of endowing human language with a durable visual form.</p>
+            <cite>Robert Bringhurst</cite>
+          </blockquote>
+
+          <h3>Practical Application</h3>
+
+          <p>Implementing vertical rhythm in CSS has become easier with custom properties. We can define a base rhythm unit and derive all other spacing values from it:</p>
+
+          <pre><code>:root {
+  --prose-line-height: 1.6;
+  --prose-rhythm: calc(1rem * var(--prose-line-height));
+}</code></pre>
+
+          <p>This approach ensures that as the base font size scales with the viewport, all spacing scales proportionally. The result is a design that feels consistent across devices.</p>
+
+          <hr>
+
+          <p>Good typography takes time to perfect, but the investment pays dividends in reader engagement and comprehension.</p>
+        </article>
+      </section>
+
+      <!-- Prose Demo: Micro Post -->
+      <section class="demo-section">
+        <h2>Prose: Micro Post Example</h2>
+        <p>The <code>.prose--compact</code> variant provides tighter spacing for short, tweet-like content.</p>
+
+        <article class="prose prose--compact" style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-light); border-radius: 0.5rem;">
+          <p>Just discovered that CSS custom properties can reference other custom properties. This opens up so many possibilities for creating truly dynamic design systems.</p>
+
+          <p>The key insight: cascade still applies to custom properties, so you can override values at any level of the DOM tree.</p>
+        </article>
+      </section>
+
+      <!-- Prose Demo: Link Post -->
+      <section class="demo-section">
+        <h2>Prose: Link Post Example</h2>
+        <p>The <code>.prose--link</code> variant styles the heading as a prominent link with compact commentary below.</p>
+
+        <article class="prose prose--link" style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-light); border-radius: 0.5rem;">
+          <h3><a href="#">The State of CSS 2024 Survey Results Are In</a></h3>
+
+          <p>Interesting findings this year. Container queries are now used by over 40% of developers, and the cascade layers feature is gaining significant adoption. Worth reading through the full results.</p>
+        </article>
+      </section>
+
+      <!-- Prose Demo: Photo Post -->
+      <section class="demo-section">
+        <h2>Prose: Photo Post Example</h2>
+        <p>The <code>.prose--photo</code> variant centers captions and gives more prominence to figures.</p>
+
+        <article class="prose prose--photo" style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-light); border-radius: 0.5rem;">
+          <figure>
+            <div style="background: var(--primary-dark); height: 200px; border-radius: 0.25rem; display: flex; align-items: center; justify-content: center;">
+              <span style="color: var(--text-muted);">[Photo placeholder]</span>
+            </div>
+            <figcaption>Morning light filtering through the forest canopy, capturing the ephemeral beauty of mist and shadow.</figcaption>
+          </figure>
+
+          <p>Taken during an early morning hike in the Pacific Northwest. The interplay of light and fog created these ethereal conditions that lasted only minutes.</p>
+        </article>
+      </section>
+
+      <!-- Gradient Effects Showcase -->
+      <section class="gradient-showcase">
+        <h2>Gradient & Gradient Hover Effects</h2>
+        <p>This section demonstrates the <code>--gradient</code> and <code>--gradient-hover</code> CSS variables. Hover over this section to see the gradient transition effect.</p>
+
+        <div style="margin-top: 1.5rem;">
+          <h3>How it works</h3>
+          <ul>
+            <li><strong>Dark Mode:</strong> Subtle gradient from <code>--bg</code> to a slightly lighter shade, with hover effect</li>
+            <li><strong>Light Mode:</strong> Gradient from <code>--bg</code> to <code>--bg-light</code>, with hover effect inverting back to base gradient</li>
+          </ul>
+        </div>
+
+        <div style="margin-top: 1.5rem; padding: 1rem; border: var(--border-card); border-radius: 0.25rem; background: var(--bg-light);">
+          <p><strong>CSS Variables:</strong></p>
+          <ul style="font-family: var(--ff-mono); font-size: 0.9em; margin-top: 0.5rem;">
+            <li><code>background: var(--gradient)</code></li>
+            <li><code>:hover { background: var(--gradient-hover) }</code></li>
+          </ul>
+        </div>
+
+        <p style="margin-top: 1.5rem;"><small><em>Toggle between light and dark themes to see how the gradients adapt to each mode.</em></small></p>
+      </section>
+    </main>
+
+    <footer style="text-align: center; padding-top: 2rem; border-top: 1px solid var(--border);">
+      <p><small>Modern CSS Boilerplate Demo • Figtree & Fira Code fonts • HSL color system</small></p>
+    </footer>
+  </div>
+
+  <script>
+    // Theme toggle with localStorage persistence
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    }
+
+    // Initialize theme from localStorage or system preference
+    (function initTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+</body>
+</html>
