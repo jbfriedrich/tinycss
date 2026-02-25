@@ -170,30 +170,49 @@ ol[role='list'] {
    CUSTOM PROPERTIES
    ============================================================================= */
 
-/* Typography and color variables */
+/*
+ * DESIGN TOKEN OVERVIEW
+ *
+ * Font stacks:     --ff (sans), --ff-serif, --ff-mono, --ff-emoji
+ * Font shorthands: --h1..--h6 (headings), --p (body), --p2 (small), --p3 (caption/italic)
+ * Spacing:         --space-3xs..--space-3xl (0.25rem..6rem, doubles roughly each step)
+ * Prose rhythm:    --prose-* vars for long-form content vertical spacing
+ * Color hues:      --hue (primary=320 magenta), --alt-hue (secondary=220 blue)
+ * Color shades:    --primary-darkest..--primary-lightest (7 stops, same for secondary)
+ * Theme vars:      --bg, --text, --border, --link-*, etc. (set per dark/light mode)
+ * Shadows:         --shadow, --shadow-s/m/l (each has inset highlight + drop shadow)
+ */
+
+/* --- FONT STACKS ---
+ * Each stack has a preferred Google Font, then system fallbacks, then emoji.
+ * Loaded via @import at the top of this file. */
 :root {
   --ff: "Inter",system-ui,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,Helvetica,Arial,"Helvetica Neue",sans-serif,var(--ff-emoji);
   --ff-serif: "Merriweather","Times New Roman",Times,Georgia,serif,var(--ff-emoji);
   --ff-mono: "Fira Code",ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace,var(--ff-emoji);
   --ff-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  /* Heading scale options (size/line-height):
-     Option 1 - Minor Third (1.2 ratio), more subtle:
-       h1: 2.488rem/1.2   h2: 2.074rem/1.25  h3: 1.728rem/1.3
-       h4: 1.44rem/1.4    h5: 1.2rem/1.4     h6: 1rem/1.4
-     Option 2 - Major Third (1.25 ratio), more contrast (current):
-       h1: 3.052rem/1.2   h2: 2.441rem/1.25  h3: 1.953rem/1.3
-       h4: 1.563rem/1.4   h5: 1.25rem/1.4    h6: 1rem/1.4
-  */
-  --h1: bold 3.052rem/1.2em var(--ff);
-  --h2: bold 2.441rem/1.25em var(--ff);
-  --h3: bold 1.953rem/1.3em var(--ff);
-  --h4: bold 1.563rem/1.4em var(--ff);
-  --h5: bold 1.25rem/1.4em var(--ff);
-  --h6: bold 1rem/1.4em var(--ff);
-  --p: 1rem/1.6em var(--ff-serif);
-  --p2: .875rem/1.5em var(--ff-serif);
-  --p3: italic .75rem/1.5em var(--ff-serif);
-  /* Spacing scale based on root font size */
+  /* --- FONT SHORTHANDS ---
+   * CSS `font` shorthand values: [weight] size/line-height family
+   * Heading scale uses Major Third ratio (1.25x each step).
+   * Line-height gets tighter as size increases (1.4 -> 1.2).
+   *
+   * Alternate scale (Minor Third, 1.2 ratio, more subtle):
+   *   h1: 2.488rem  h2: 2.074rem  h3: 1.728rem
+   *   h4: 1.44rem   h5: 1.2rem    h6: 1rem
+   */
+  --h1: bold 3.052rem/1.2em var(--ff);    /* ~49px - page titles */
+  --h2: bold 2.441rem/1.25em var(--ff);   /* ~39px - section headings */
+  --h3: bold 1.953rem/1.3em var(--ff);    /* ~31px - subsections */
+  --h4: bold 1.563rem/1.4em var(--ff);    /* ~25px - card titles, etc. */
+  --h5: bold 1.25rem/1.4em var(--ff);     /* ~20px - minor headings */
+  --h6: bold 1rem/1.4em var(--ff);        /* ~16px - smallest heading */
+  --p: 1rem/1.6em var(--ff-serif);        /* body text (serif for readability) */
+  --p2: .875rem/1.5em var(--ff-serif);    /* small/secondary text */
+  --p3: italic .75rem/1.5em var(--ff-serif); /* captions, fine print */
+  /* --- SPACING SCALE ---
+   * T-shirt sizes from 3xs to 3xl. All rem-based so they scale
+   * with the fluid root font size (16px on mobile -> 21px on wide screens).
+   * Use for padding, margins, gaps. Roughly doubles every 2 steps. */
   --space-3xs: 0.25rem;  /* 4px at 16px base */
   --space-2xs: 0.5rem;   /* 8px */
   --space-xs: 0.75rem;   /* 12px */
@@ -203,19 +222,31 @@ ol[role='list'] {
   --space-xl: 3rem;      /* 48px */
   --space-2xl: 4rem;     /* 64px */
   --space-3xl: 6rem;     /* 96px */
-  /* Prose-specific spacing (line-height based) */
+  /* --- PROSE VERTICAL RHYTHM ---
+   * Used by the .prose class for long-form content (articles, blog posts).
+   * All spacing derives from a single "rhythm" unit = one line of text,
+   * so paragraphs, headings, lists, and blocks all feel evenly spaced.
+   * Override these in .prose--compact or other variants for tighter/looser feel. */
   --prose-line-height: 1.6;
-  --prose-rhythm: calc(1rem * var(--prose-line-height));  /* ~25.6px, scales with font */
-  --prose-space-paragraph: var(--prose-rhythm);
-  --prose-space-heading-above: calc(var(--prose-rhythm) * 1.5);
-  --prose-space-heading-below: calc(var(--prose-rhythm) * 0.5);
-  --prose-space-list-item: calc(var(--prose-rhythm) * 0.25);
-  --prose-space-block: var(--prose-rhythm);
-  /* Colors and shades */
-  --hue: 320;
-  --alt-hue: 220;
-  --tertiary-hue: calc(var(--hue) + 300);
-  --accent-hue: calc(var(--hue) + 60);
+  --prose-rhythm: calc(1rem * var(--prose-line-height));  /* ~25.6px - the base rhythm unit */
+  --prose-space-paragraph: var(--prose-rhythm);           /* 1 line between paragraphs */
+  --prose-space-heading-above: calc(var(--prose-rhythm) * 1.5); /* 1.5 lines above headings */
+  --prose-space-heading-below: calc(var(--prose-rhythm) * 0.5); /* 0.5 lines below headings */
+  --prose-space-list-item: calc(var(--prose-rhythm) * 0.25);    /* tight spacing between li's */
+  --prose-space-block: var(--prose-rhythm);               /* 1 line around blockquotes, pre, figure */
+  /* --- COLOR SYSTEM ---
+   * Built on HSL with two base hues. Change --hue and --alt-hue to re-theme
+   * the entire site. All shades share 80% saturation; only lightness varies.
+   *
+   * Shade scale (lightness %):
+   *   darkest=5%  dark=10%  darker=30%  base=~50%  lighter=70%  light=90%  lightest=95%
+   *
+   * To re-theme: just change the two hue values below. */
+  --hue: 320;          /* primary hue: magenta/pink */
+  --alt-hue: 220;      /* secondary hue: blue */
+  --tertiary-hue: calc(var(--hue) + 300);  /* unused - reserved for future */
+  --accent-hue: calc(var(--hue) + 60);     /* unused - reserved for future */
+  /* Primary palette (magenta at hue 320) */
   --primary-lightest: hsl(var(--hue),80%,95%);
   --primary-light: hsl(var(--hue),80%,90%);
   --primary-lighter: hsl(var(--hue),80%,70%);
@@ -223,6 +254,7 @@ ol[role='list'] {
   --primary-darker: hsl(var(--hue),80%,30%);
   --primary-dark: hsl(var(--hue),80%,10%);
   --primary-darkest: hsl(var(--hue),80%,5%);
+  /* Secondary palette (blue at hue 220) */
   --secondary-lightest: hsl(var(--alt-hue),80%,95%);
   --secondary-light: hsl(var(--alt-hue),80%,90%);
   --secondary-lighter: hsl(var(--alt-hue),80%,70%);
@@ -230,74 +262,109 @@ ol[role='list'] {
   --secondary-darker: hsl(var(--alt-hue),80%,30%);
   --secondary-dark: hsl(var(--alt-hue),80%,10%);
   --secondary-darkest: hsl(var(--alt-hue),80%,5%);
+  /* Badge text colors - ensures readable contrast on any badge shade */
   --badge-text-on-dark-bg: hsl(0, 0%, 100%);  /* white text for dark badge backgrounds (same in both modes) */
+  /* --- SHADOWS ---
+   * Each shadow-s/m/l combines 3 layers for a "raised surface" look:
+   *   1. inset white highlight (simulates top-lit edge)
+   *   2. tight dark shadow (crisp depth)
+   *   3. soft spread shadow (ambient occlusion) */
   --shadow: 0px 2px 2px hsla(0, 0%, 0%, 0.07), 0px 4px 4px hsla(0, 0%, 0%, 0.15);
-  --shadow-s: inset 0 1px 2px #ffffff30, /* top highlight */
-              0 1px 2px #00000030, /* dark shadow */
-              0 2px 4px #00000015; /* soft shadow */
-  --shadow-m: inset 0 1px 2px #ffffff50, /* top highlight */
-              0 2px 4px #00000030, /* dark shadow */
-              0 4px 8px #00000015; /* soft shadow */
-  --shadow-l: inset 0 1px 2px #ffffff70, /* top highlight */
-              0 4px 6px #00000030, /* dark shadow */
-              0 6px 10px #00000015; /* soft shadow */
+  --shadow-s: inset 0 1px 2px #ffffff30,
+              0 1px 2px #00000030,
+              0 2px 4px #00000015;
+  --shadow-m: inset 0 1px 2px #ffffff50,
+              0 2px 4px #00000030,
+              0 4px 8px #00000015;
+  --shadow-l: inset 0 1px 2px #ffffff70,
+              0 4px 6px #00000030,
+              0 6px 10px #00000015;
 }
 
-/* Dark mode color scheme */
+/* --- THEME VARIABLES ---
+ * These are set per theme (dark/light) and consumed throughout the stylesheet.
+ * Toggled by setting data-theme="dark" or data-theme="light" on <html>.
+ *
+ * Surfaces:   --bg-dark (outermost), --bg (main), --bg-light (elevated/cards)
+ * Text:       --text (primary), --text-muted (secondary/captions)
+ * Borders:    --border (general), --border-card (card edges), --border-card-top (highlight edge)
+ * Gradients:  --gradient / --alt-gradient (+ hover variants) for subtle card backgrounds
+ * Links:      --link-color, --link-hover-color, --link-visited-color (+ underline variants)
+ * Selection:  --selection-bg, --selection-text (text highlight colors)
+ * Badge text: --badge-text-on-light-bg (adapts per theme for contrast on light-colored badges)
+ *
+ * Link hover/visited use relative-color syntax (hsl `from` keyword) to derive
+ * lighter/darker/desaturated variants from --primary without extra variables. */
+
+/* Dark mode */
 :root[data-theme=dark] {
+  /* Surfaces: pure black -> near-black -> dark gray */
   --bg-dark: hsl(0, 0%, 0%);
   --bg: hsl(0, 0%, 5%);
   --bg-light: hsl(0, 0%, 10%);
   --bg-blockquote: var(--primary-dark);
+  /* Text */
   --text: hsl(0, 0%, 95%);
   --text-muted: hsl(0, 0%, 70%);
+  /* Borders & decorations */
   --border: hsl(0, 0%, 30%);
+  --highlight: hsl(0, 0%, 60%);
+  --border-card: solid 1px var(--border);
+  --border-card-top: solid 1px var(--highlight);
+  /* Gradients (subtle bottom-to-top, for cards) */
   --gradient: linear-gradient(0deg, var(--bg) 95%, var(--bg-light));
   --gradient-hover: linear-gradient(0deg, var(--bg), var(--bg-light));
   --alt-gradient: linear-gradient(0deg, var(--bg-light), var(--bg));
   --alt-gradient-hover: linear-gradient(0deg, var(--bg-light) 95%, var(--bg));
-  --highlight: hsl(0, 0%, 60%);
-  --border-card: solid 1px var(--border);
-  --border-card-top: solid 1px var(--highlight);
+  /* Text selection */
   --selection-bg: var(--secondary-dark);
   --selection-text: var(--text);
+  /* Links: lighter on hover, desaturated when visited */
   --link-color: var(--primary);
   --link-hover-color: hsl(from var(--primary) h s calc(l + 20));
   --link-underline-color: var(--primary);
   --link-underline-hover-color: hsl(from var(--primary) h s calc(l + 20));
   --link-visited-color: hsl(from var(--primary) h calc(s - 20) l);
   --link-visited-underline-color: hsl(from var(--primary) h calc(s - 20) l);
-  --badge-text-on-light-bg: hsl(0, 0%, 0%);  /* black text for light badge backgrounds in dark mode */
+  /* Badge contrast */
+  --badge-text-on-light-bg: hsl(0, 0%, 0%);
   /* TODO: Take a look at tertiary and accent colors later */
   /* --tertiary-color: hsl(var(--tertiary-hue), 80%, 80%);
   --accent-color: hsl(var(--accent-hue), 80%, 80%); */
 }
 
-/* Light mode color scheme */
+/* Light mode */
 :root[data-theme=light] {
+  /* Surfaces: light gray -> off-white -> white */
   --bg-dark: hsl(0, 0%, 90%);
   --bg: hsl(0, 0%, 95%);
   --bg-light: hsl(0, 0%, 100%);
   --bg-blockquote: var(--primary-lightest);
+  /* Text */
   --text: hsl(0, 0%, 5%);
   --text-muted: hsl(0, 0%, 30%);
+  /* Borders & decorations */
   --border: hsl(0, 0%, 70%);
+  --highlight: hsl(0, 0%, 100%);
+  --border-card: solid 1px var(--bg);
+  --border-card-top: solid 1px var(--highlight);
+  /* Gradients */
   --gradient: linear-gradient(0deg, var(--bg) 95%, var(--bg-light));
   --gradient-hover: linear-gradient(0deg, var(--bg), var(--bg-light));
   --alt-gradient: linear-gradient(0deg, var(--bg-light), var(--bg));
   --alt-gradient-hover: linear-gradient(0deg, var(--bg-light) 95%, var(--bg));
-  --highlight: hsl(0, 0%, 100%);
-  --border-card: solid 1px var(--bg);
-  --border-card-top: solid 1px var(--highlight);
+  /* Text selection */
   --selection-bg: var(--secondary-light);
   --selection-text: var(--text);
+  /* Links: darker on hover, more saturated when visited */
   --link-color: var(--primary);
   --link-hover-color: hsl(from var(--primary) h s calc(l - 20));
   --link-underline-color: var(--primary);
   --link-underline-hover-color: hsl(from var(--primary) h s calc(l - 20));
   --link-visited-color: hsl(from var(--primary) h calc(s + 20) l);
   --link-visited-underline-color: hsl(from var(--primary) h calc(s + 20) l);
-  --badge-text-on-light-bg: hsl(0, 0%, 5%);  /* near-black text for light badge backgrounds in light mode */
+  /* Badge contrast */
+  --badge-text-on-light-bg: hsl(0, 0%, 5%);
   /* TODO: Take a look at tertiary and accent colors later */
   /* --tertiary-color: hsl(var(--tertiary-hue), 80%, 20%);
   --accent-color: hsl(var(--accent-hue), 80%, 20%); */
