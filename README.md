@@ -25,7 +25,7 @@ Change those two numbers and the whole palette shifts. Each color has variants f
 
 Three font stacks:
 
-- **Inter** for headings and UI
+- **Open Sans** for headings and UI
 - **Merriweather** for body text (nice for reading)
 - **Fira Code** for code blocks
 
@@ -40,6 +40,17 @@ The `.prose` class handles vertical rhythm for blog posts and articles. There ar
 - **`.prose--link`** - For link posts with commentary
 
 These are just foundations—modify them however you like for your own needs.
+
+## Blog components
+
+Beyond the design system, `style.css` also ships the site chrome a real blog needs:
+layout container, site header/nav + theme toggle, footer, feed cards (`.entry`,
+`.entry--post|note|link|photo` — including a Jim Nielsen-style link layout), the compact
+`.stream` rows, `.photo-grid`, `.taglist`, `.pagination`, `.archive` and `.search`. These
+are built on the same tokens, so the one-hue re-theming applies to them too — there's
+nothing extra to include, it's all in the single `style.css`.
+
+These power the **Summit** Hugo theme (`../summit`).
 
 ## Quick start
 
@@ -64,11 +75,18 @@ Set `data-theme="light"` or `data-theme="dark"` on the html element, or remove i
 ## Files
 
 ```
-style.css                 - The stylesheet
+style.css                 - The complete framework: design system (tokens, reset,
+                            typography, prose, badges) + blog components (header, feed
+                            cards, stream, photo grid, gallery, tags, archive, search)
 demo.html                 - Examples of everything
 accessibility-report.js   - Run with Node to check WCAG contrast compliance
 accessibility-report.html - Generated report showing pass/fail for all color combos
 ```
+
+> **Minifying:** there's no pre-built `.min.css` — consumers minify at build time (the
+> Summit theme bundles + minifies via Hugo Pipes). If you minify standalone, use a
+> **CSS-aware** minifier: the relative-colour syntax `hsl(from var(--primary) h s 38%)`
+> relies on significant spaces, so naive whitespace-stripping will corrupt it.
 
 ## Resources that helped me
 

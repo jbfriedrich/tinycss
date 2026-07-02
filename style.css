@@ -14,7 +14,7 @@
    FONTS
    ============================================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap');
 
 /* =============================================================================
    CSS RESET
@@ -30,24 +30,27 @@
   margin: 0;
 }
 
-/* Links */
+/* Links — the site-wide standard: normal text colour with a permanent accent
+ * underline; on hover the text and underline shift to the link colour (the
+ * underline never vanishes). Re-themes with --primary via the link tokens.
+ * Components that want quiet links (nav, meta, tags) override locally. */
 a {
-  color: var(--link-color);
+  color: var(--text);
   text-decoration: underline;
   text-decoration-color: var(--link-underline-color);
-  text-decoration-thickness: 1px;
+  text-decoration-thickness: 2px;
   text-underline-offset: 4px;
-  transition: text-decoration-color 0.2s ease;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
 }
 
 a:visited {
-  color: var(--link-visited-color);
+  color: var(--text);
   text-decoration-color: var(--link-visited-underline-color);
 }
 
 a:hover {
   color: var(--link-hover-color);
-  text-decoration-color: transparent;
+  text-decoration-color: var(--link-hover-color);
 }
 
 /* Default anchor styles for links without classes */
@@ -180,14 +183,15 @@ ol[role='list'] {
  * Color hues:      --hue (primary=320 magenta), --alt-hue (secondary=220 blue)
  * Color shades:    --primary-darkest..--primary-lightest (7 stops, same for secondary)
  * Theme vars:      --bg, --text, --border, --link-*, etc. (set per dark/light mode)
- * Shadows:         --shadow, --shadow-s/m/l (each has inset highlight + drop shadow)
+ * Shadows:         --shadow-xs (subtle plain drop), --shadow-xs-up (same, upward),
+ *                   --shadow (plain drop), --shadow-s/m/l (inset highlight + drop)
  */
 
 /* --- FONT STACKS ---
  * Each stack has a preferred Google Font, then system fallbacks, then emoji.
  * Loaded via @import at the top of this file. */
 :root {
-  --ff: "Inter",system-ui,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,Helvetica,Arial,"Helvetica Neue",sans-serif,var(--ff-emoji);
+  --ff: "Open Sans",system-ui,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,Helvetica,Arial,"Helvetica Neue",sans-serif,var(--ff-emoji);
   --ff-serif: "Merriweather","Times New Roman",Times,Georgia,serif,var(--ff-emoji);
   --ff-mono: "Fira Code",ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace,var(--ff-emoji);
   --ff-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -209,6 +213,21 @@ ol[role='list'] {
   --p: 1rem/1.6em var(--ff-serif);        /* body text (serif for readability) */
   --p2: .875rem/1.5em var(--ff-serif);    /* small/secondary text */
   --p3: italic .75rem/1.5em var(--ff-serif); /* captions, fine print */
+  /* --- FONT-SIZE SCALE ---
+   * T-shirt sizes for any NON-heading, NON-paragraph font-size. Mirrors the
+   * spacing scale. Together with --p/--p2/--p3 these are the ONLY values to
+   * use for font-size — never hardcode a manual rem/em. Headings use --h1..6. */
+  --fs-4xs: 0.25rem;
+  --fs-3xs: 0.5rem;
+  --fs-2xs: 0.75rem;
+  --fs-xs: 0.875rem;  /* UI text just below reading size (lists, nav, meta). */
+  --fs-s: 1rem;
+  --fs-m: 1.25rem;    /* lead / dek — just above reading size */
+  --fs-l: 1.5rem;
+  --fs-xl: 2rem;
+  --fs-2xl: 3rem;
+  --fs-3xl: 4rem;
+  --fs-4xl: 6rem;
   /* --- SPACING SCALE ---
    * T-shirt sizes from 3xs to 3xl. All rem-based so they scale
    * with the fluid root font size (16px on mobile -> 21px on wide screens).
@@ -222,6 +241,19 @@ ol[role='list'] {
   --space-xl: 3rem;      /* 48px */
   --space-2xl: 4rem;     /* 64px */
   --space-3xl: 6rem;     /* 96px */
+  /* --- BORDER RADIUS SCALE ---
+   * The only three corner radii in the system. Use a token for every
+   * border-radius — never a literal. (Pills use a one-off 50rem; truly
+   * bespoke cases like the lightbox keep their own values.) */
+  --radius-s: 0.25rem;
+  --radius-m: 0.5rem;
+  --radius-l: 0.75rem;
+  /* --- LINE-HEIGHT SCALE ---
+   * For UI text OUTSIDE .prose (which uses --prose-line-height) and OUTSIDE
+   * headings (--h1..6 bake their own). Use a token, never a literal. */
+  --lh-tight: 1.3;   /* dense rows, multi-line labels/titles */
+  --lh-snug: 1.45;   /* compact UI blocks */
+  --lh-base: 1.6;    /* default; matches --prose-line-height */
   /* --- PROSE VERTICAL RHYTHM ---
    * Used by the .prose class for long-form content (articles, blog posts).
    * All spacing derives from a single "rhythm" unit = one line of text,
@@ -246,6 +278,13 @@ ol[role='list'] {
   --alt-hue: 220;      /* secondary hue: blue */
   --tertiary-hue: calc(var(--hue) + 300);  /* unused - reserved for future */
   --accent-hue: calc(var(--hue) + 60);     /* unused - reserved for future */
+  /* --- SURFACE TINT ---
+   * Neutral by default. A theme can warm/cool its bg surfaces by setting these
+   * (like --hue re-themes accents). Surfaces flow through them, so one knob
+   * tints the whole page; at 100% lightness the tint vanishes (white stays
+   * white), which gives "neutral chrome over tinted paper" for free. */
+  --surface-hue: 0;
+  --surface-sat: 0%;
   /* Primary palette (magenta at hue 320) */
   --primary-lightest: hsl(var(--hue),80%,95%);
   --primary-light: hsl(var(--hue),80%,90%);
@@ -269,6 +308,8 @@ ol[role='list'] {
    *   1. inset white highlight (simulates top-lit edge)
    *   2. tight dark shadow (crisp depth)
    *   3. soft spread shadow (ambient occlusion) */
+  --shadow-xs: 0px 1px 2px hsla(0, 0%, 0%, 0.05), 0px 2px 4px hsla(0, 0%, 0%, 0.09);
+  --shadow-xs-up: 0px -1px 2px hsla(0, 0%, 0%, 0.05), 0px -2px 4px hsla(0, 0%, 0%, 0.09);  /* mirror of --shadow-xs, casts upward (e.g. footer top edge) */
   --shadow: 0px 2px 2px hsla(0, 0%, 0%, 0.07), 0px 4px 4px hsla(0, 0%, 0%, 0.15);
   --shadow-s: inset 0 1px 2px #ffffff30,
               0 1px 2px #00000030,
@@ -306,6 +347,7 @@ ol[role='list'] {
   /* Text */
   --text: hsl(0, 0%, 95%);
   --text-muted: hsl(0, 0%, 70%);
+  --heading: hsl(0, 0%, 100%);
   /* Borders & decorations */
   --border: hsl(0, 0%, 30%);
   --highlight: hsl(0, 0%, 60%);
@@ -335,14 +377,24 @@ ol[role='list'] {
 
 /* Light mode */
 :root[data-theme=light] {
-  /* Surfaces: light gray -> off-white -> white */
-  --bg-dark: hsl(0, 0%, 90%);
-  --bg: hsl(0, 0%, 95%);
-  --bg-light: hsl(0, 0%, 100%);
-  --bg-blockquote: var(--primary-lightest);
+  /* Surfaces flow through the surface-tint knob: a faint warmth reads as
+   * "paper" and keeps depth visible near white (hue contrast survives where a
+   * luminance step would not). --bg-chrome stays pure white (tint vanishes at
+   * 100% L), giving neutral chrome over warm paper. */
+  --surface-hue: 40;
+  --surface-sat: 44%;   /* heavier "cream" overall: raise toward ~55% to deepen the tint on every surface */
+  --bg-dark:   hsl(var(--surface-hue), var(--surface-sat), 90%);
+  --bg:        hsl(var(--surface-hue), var(--surface-sat), 95%);
+  --bg-light:  hsl(var(--surface-hue), var(--surface-sat), 98.3%);  /* heavier cream on the reading paper: lower L to 97.5% */
+  --bg-chrome: hsl(var(--surface-hue), var(--surface-sat), 100%);
+  --bg-blockquote: hsl(var(--hue), 80%, 97%);
+  /* The base --secondary (50% L) washes out as a thin outline on near-white;
+   * deepen it in light mode (like links) so tags/accents read with weight. */
+  --secondary: hsl(var(--alt-hue), 80%, 40%);
   /* Text */
   --text: hsl(0, 0%, 5%);
   --text-muted: hsl(0, 0%, 30%);
+  --heading: hsl(0, 0%, 0%);
   /* Borders & decorations */
   --border: hsl(0, 0%, 70%);
   --highlight: hsl(0, 0%, 100%);
@@ -356,13 +408,15 @@ ol[role='list'] {
   /* Text selection */
   --selection-bg: var(--secondary-light);
   --selection-text: var(--text);
-  /* Links: darker on hover, more saturated when visited */
-  --link-color: var(--primary);
-  --link-hover-color: hsl(from var(--primary) h s calc(l - 20));
-  --link-underline-color: var(--primary);
-  --link-underline-hover-color: hsl(from var(--primary) h s calc(l - 20));
-  --link-visited-color: hsl(from var(--primary) h calc(s + 20) l);
-  --link-visited-underline-color: hsl(from var(--primary) h calc(s + 20) l);
+  /* Links: the base --primary (48% L) is too light for WCAG AA on a white
+   * background, so in light mode we darken links to ~38% L (and hover to ~28%).
+   * This keeps normal-size body links >= 4.5:1 across the hue range. */
+  --link-color: hsl(from var(--primary) h s 38%);
+  --link-hover-color: hsl(from var(--primary) h s 28%);
+  --link-underline-color: hsl(from var(--primary) h s 38%);
+  --link-underline-hover-color: hsl(from var(--primary) h s 28%);
+  --link-visited-color: hsl(from var(--primary) h calc(s + 10) 34%);
+  --link-visited-underline-color: hsl(from var(--primary) h calc(s + 10) 34%);
   /* Badge contrast */
   --badge-text-on-light-bg: hsl(0, 0%, 5%);
   /* TODO: Take a look at tertiary and accent colors later */
@@ -375,6 +429,12 @@ ol[role='list'] {
    ============================================================================= */
 
 /* Headings */
+/* Headings use a dedicated colour token (pure white in dark, pure black in
+   light) so titles pop a little harder than body text. */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--heading);
+}
+
 h1 {
   font: var(--h1);
 }
@@ -422,9 +482,9 @@ pre {
 /* Inline code */
 code {
   /* background-color: var(--secondary-light); */
-  color: var(--primary);
+  color: var(--link-color); /* adapts per mode for AA contrast */
   padding: var(--space-3xs) var(--space-2xs);
-  border-radius: 3px;
+  border-radius: var(--radius-s);
 }
 
 /* Keyboard input */
@@ -432,7 +492,7 @@ kbd {
   background-color: var(--secondary-light);
   color: var(--secondary-darker);
   padding: var(--space-3xs) var(--space-2xs);
-  border-radius: 3px;
+  border-radius: var(--radius-s);
   border: 1px solid var(--border);
 }
 
@@ -441,7 +501,7 @@ pre {
   background-color: var(--primary-darkest);
   color: var(--secondary-lighter);
   padding: var(--space-m);
-  border-radius: 6px;
+  border-radius: var(--radius-m);
   overflow-x: auto;
   line-height: 1.5;
   border: var(--border-card);
@@ -483,7 +543,7 @@ li + li {
 blockquote {
   background-color: var(--bg-blockquote);
   border-inline-start: 4px solid var(--primary);
-  border-radius: .25rem;
+  border-radius: var(--radius-s);
   padding: var(--space-m);
   font-family: var(--ff-serif);
 }
@@ -657,17 +717,23 @@ blockquote cite {
   padding: 0.35em 0.65em;
   font-family: var(--ff);
   font-size: 0.75em;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1;
   text-align: center;
   white-space: nowrap;
   vertical-align: baseline;
-  border-radius: 0.25rem;
+  border-radius: var(--radius-s);
 }
 
-/* Pill badge modifier */
+/* Pill badge modifier.
+ * --radius-l (0.75rem) is enough for a TRUE pill here: a browser caps any
+ * border-radius at half the element's height, and a badge is only ~20px tall
+ * (half ≈ 10px < 12px), so the corners are already fully rounded — identical
+ * to the old 50rem "infinite radius" trick, but without the magic number.
+ * Note: on anything taller than ~1.5rem this renders as rounded corners, not a
+ * full stadium. Use a bespoke larger radius there if a true pill is needed. */
 .badge-pill {
-  border-radius: 50rem;
+  border-radius: var(--radius-l);
 }
 
 /* -----------------------------------------------------------------------------
@@ -855,11 +921,1013 @@ button.badge:focus-visible {
 :focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
-  border-radius: 2px;
+  border-radius: var(--radius-s);
 }
 
 /* Text selection highlighting */
 ::selection {
   background-color: var(--selection-bg);
   color: var(--selection-text);
+}
+
+
+/* #############################################################################
+   #  BLOG COMPONENTS
+   #  Merged from the former blog.css: site chrome + components built on the
+   #  tokens above (layout, header/nav, footer, feed cards, stream, photo grid,
+   #  gallery/lightbox, tags, pagination, archive, search). Appended in original
+   #  order so the cascade is byte-for-byte identical to the old 2-file bundle.
+   ############################################################################# */
+
+/* =============================================================================
+   LAYOUT PRIMITIVES
+   ============================================================================= */
+
+:root {
+  --content-max: 44rem;   /* reading column for prose/feeds (~measure) */
+  --wide-max: 72rem;      /* wide column for photo grids, archive */
+  --measure: 74ch;        /* hard cap on line length for long-form prose */
+  --gutter: var(--space-m);
+  /* Brand accent: a primary->secondary gradient, used as the header/footer rule. */
+  --brand-gradient: linear-gradient(90deg, var(--primary), var(--secondary));
+  /* Bootstrap-icons glyphs as data URIs (used as masks so they inherit currentColor) */
+  --icon-tag: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0'/%3E%3Cpath d='M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z'/%3E%3C/svg%3E");
+  --icon-sun: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708'/%3E%3C/svg%3E");
+  --icon-moon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278'/%3E%3Cpath d='M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.73 1.73 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.73 1.73 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.73 1.73 0 0 0 1.097-1.097zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.16 1.16 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.16 1.16 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732z'/%3E%3C/svg%3E");
+  --icon-chevron-left: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0'/%3E%3C/svg%3E");
+  --icon-chevron-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708'/%3E%3C/svg%3E");
+  --icon-x: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z'/%3E%3C/svg%3E");
+  /* Post-type markers (stream rows): file/sticky/images/link from Bootstrap Icons. */
+  --icon-post: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5'/%3E%3Cpath d='M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z'/%3E%3C/svg%3E");
+  --icon-note: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.5 1A1.5 1.5 0 0 0 1 2.5v11A1.5 1.5 0 0 0 2.5 15h6.086a1.5 1.5 0 0 0 1.06-.44l4.915-4.914A1.5 1.5 0 0 0 15 8.586V2.5A1.5 1.5 0 0 0 13.5 1zM2 2.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 .5.5V8H9.5A1.5 1.5 0 0 0 8 9.5V14H2.5a.5.5 0 0 1-.5-.5zm7 11.293V9.5a.5.5 0 0 1 .5-.5h4.293z'/%3E%3C/svg%3E");
+  --icon-photos: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3'/%3E%3Cpath d='M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2M14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1M2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1z'/%3E%3C/svg%3E");
+  --icon-link: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1 1 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4 4 0 0 1-.128-1.287z'/%3E%3Cpath d='M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243z'/%3E%3C/svg%3E");
+}
+
+/* Centered width container. Add .wrap--wide for grid-heavy pages. */
+.wrap {
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.wrap--wide {
+  max-width: var(--wide-max);
+}
+
+/* Sticky footer scaffolding: header / main / footer stacked full height. */
+.site {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.site-main {
+  flex: 1 0 auto;
+  padding-block: var(--space-xl);
+  background: var(--bg-light);
+}
+
+/* Keyboard skip link — visually hidden until focused. */
+.skip-link {
+  position: absolute;
+  left: var(--space-s);
+  top: -3rem;
+  z-index: 100;
+  padding: var(--space-2xs) var(--space-s);
+  background: var(--bg-light);
+  color: var(--text);
+  border-radius: var(--radius-s);
+  text-decoration: none;
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus {
+  top: var(--space-s);
+}
+
+/* style.css adds `li + li { margin-block-start }` for prose lists. The blog
+ * components below are flex/grid layouts, so neutralise that inherited margin
+ * (otherwise every item after the first is nudged down — e.g. tag chips and
+ * footer-nav links stop aligning on one row). */
+.site-nav li,
+.site-footer__nav li,
+.taglist li,
+.feed > li,
+.stream > li,
+.photo-grid > li,
+.archive__list > li,
+.search__results > li {
+  margin-block: 0;
+}
+
+/* These are non-bulleted layout lists, so strip the browser's default list
+ * margin and left padding (~40px) — otherwise their content is indented
+ * relative to everything else in the column (e.g. the footer copyright line). */
+.site-footer__nav,
+.taglist,
+.feed,
+.stream,
+.photo-grid,
+.archive__list,
+.search__results {
+  margin-block: 0;
+  padding-inline-start: 0;
+}
+
+/* =============================================================================
+   SITE HEADER & NAV
+   ============================================================================= */
+
+.site-header {
+  border-block-end: 2px solid;
+  border-image: var(--brand-gradient) 1;
+  background: var(--bg);
+}
+
+/* Light mode: crisp neutral-white chrome against the faintly-warm "paper" of
+ * the main content (--bg-light). The tint difference gives header/footer vs.
+ * main the subtle surface distinction that makes dark mode pop, without a
+ * dated grey band. The header casts a soft shadow (reusing --shadow) so the
+ * content reads as sitting beneath it. (Dark mode keeps its own layered look.) */
+:root[data-theme=light] .site-header,
+:root[data-theme=light] .site-footer {
+  background: var(--bg-chrome);
+}
+
+:root[data-theme=light] .site-header {
+  /* Lift above .site-main so the downward shadow paints over the content
+   * surface instead of being covered by main's opaque background. */
+  position: relative;
+  z-index: 1;
+  box-shadow: var(--shadow-xs);
+  /* For a stronger cast, swap to the full drop shadow: */
+  /* box-shadow: var(--shadow); */
+}
+
+/* Footer mirrors the header: an upward shadow on its top edge so the content
+ * above sits in a recessed well framed by both raised chrome bars. */
+:root[data-theme=light] .site-footer {
+  position: relative;
+  z-index: 1;
+  box-shadow: var(--shadow-xs-up);
+  /* Stronger cast (upward mirror of --shadow — no token for it yet): */
+  /* box-shadow: 0 -2px 2px hsla(0,0%,0%,0.07), 0 -4px 4px hsla(0,0%,0%,0.15); */
+}
+
+.site-header__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-s) var(--space-m);
+  padding-block: var(--space-m);
+}
+
+.site-brand {
+  font: var(--h5);
+  color: var(--text);
+  text-decoration: none;
+  margin-inline-end: auto;
+}
+
+.site-brand:hover,
+.site-brand:visited {
+  color: var(--text);
+}
+
+.site-brand small {
+  display: block;
+  font: var(--p2);
+  color: var(--text-muted);
+  font-style: normal;
+}
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-s) var(--space-m);
+}
+
+.site-nav a {
+  font-family: var(--ff-serif);
+  font-size: var(--fs-s);
+  color: var(--text-muted);
+  text-decoration: none;
+  padding-block: var(--space-3xs);
+}
+
+.site-nav a:hover {
+  color: var(--link-hover-color);
+}
+
+/* Current section gets a colored underline. */
+.site-nav a[aria-current="page"],
+.site-nav a.is-active {
+  color: var(--text);
+  box-shadow: inset 0 -2px var(--primary);
+}
+
+/* Theme toggle button — badge-shaped square; the sun/moon icon is a mask on
+ * ::before so it inherits currentColor and swaps with data-theme. */
+.theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  background: var(--bg-light);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.theme-toggle::before {
+  content: "";
+  width: 1.1rem;
+  height: 1.1rem;
+  background-color: currentColor;
+  -webkit-mask: var(--icon-sun) center / contain no-repeat;
+  mask: var(--icon-sun) center / contain no-repeat;
+}
+
+:root[data-theme="dark"] .theme-toggle::before {
+  -webkit-mask-image: var(--icon-moon);
+  mask-image: var(--icon-moon);
+}
+
+/* On narrow screens the brand + full nav + toggle can't share one line. Keep
+ * the toggle up on the brand row (order:0, pushed right by the brand's auto
+ * margin) and drop the nav links to their own full-width row, where they stay
+ * on a single line via a tighter gap. Font stays --fs-s so links remain
+ * comfortably tappable. */
+@media (max-width: 48rem) {
+  /* Trim the side gutter on phones (24px -> 16px, both scale tokens). Gives the
+   * single-line nav the ~16px it needs to keep all six links on one row with
+   * the roomier --space-xs gap, down to iPhone-SE width (375px). */
+  :root {
+    --gutter: var(--space-s);
+  }
+
+  .site-nav {
+    order: 1;
+    width: 100%;
+    column-gap: var(--space-xs);
+  }
+}
+
+/* =============================================================================
+   SITE FOOTER
+   ============================================================================= */
+
+.site-footer {
+  flex-shrink: 0;
+  border-block-start: 2px solid;
+  border-image: var(--brand-gradient) 1;
+  background: var(--bg);
+  padding-block: var(--space-l);
+  color: var(--text-muted);
+  font: var(--p2);
+}
+
+/* Footer links use the site-wide base link style (normal text + permanent
+ * accent underline) — no footer-specific override needed. */
+
+/* The global `p { font: var(--p) }` rule would otherwise blow the copyright
+ * line up to 1rem; keep it the same fine-print size as the rest of the footer. */
+.site-footer p {
+  font: inherit;
+  margin-block: 0;
+}
+
+/* Nav links and copyright share one row at opposite ends; when the viewport is
+ * too narrow they wrap to a stack with a small (--space-2xs / 0.5rem) row gap. */
+.site-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-2xs) var(--space-m);
+}
+
+.site-footer__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-m);
+  list-style: none;
+}
+
+/* Below the footer's stacking width the nav sits above the copyright; centre
+ * both and give the nav a little breathing room above the copyright line. */
+@media (max-width: 45rem) {
+  .site-footer__inner {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .site-footer__nav {
+    justify-content: center;
+    margin-block-end: var(--space-2xs);
+  }
+}
+
+/* =============================================================================
+   PAGE HEADERS (section / taxonomy titles)
+   ============================================================================= */
+
+.page-header {
+  margin-block-end: var(--space-xl);
+}
+
+.page-header h1 {
+  margin-block-end: var(--space-2xs);
+}
+
+.page-header__lede {
+  font: var(--p);
+  color: var(--text-muted);
+}
+
+/* =============================================================================
+   FEED — list of entry cards (shared by home/section/taxonomy)
+   ============================================================================= */
+
+.feed {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Each card is separated by a hairline rule rather than a box, Alpine-style. */
+.entry {
+  padding-block: var(--space-l);
+  border-block-start: 1px solid var(--border);
+}
+
+.feed > .entry:first-child {
+  border-block-start: none;
+  padding-block-start: 0;
+}
+
+.entry__title {
+  /* Size comes from the <h3> tag; only the tighter feed margin is overridden. */
+  margin-block-end: var(--space-2xs);
+}
+
+.entry__title a {
+  color: var(--heading);
+  text-decoration: none;
+}
+
+.entry__title a:hover {
+  color: var(--link-hover-color);
+}
+
+/* Excerpt / commentary body — serif, slightly muted in feed context. */
+.entry__body {
+  margin-block: var(--space-2xs) var(--space-s);
+}
+
+.entry__excerpt {
+  font: var(--p);
+}
+
+/* Meta footer line: date, reading time, tags. */
+.entry__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2xs) var(--space-s);
+  font-family: var(--ff);
+  font-size: var(--fs-2xs);
+  color: var(--text-muted);
+}
+
+.entry__meta a:not(.tag) {
+  color: var(--text-muted);
+  text-decoration-color: var(--border);
+  text-decoration-thickness: 1px;
+}
+
+.entry__meta time {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Keep date / reading-time grouped on the left, push tags to the right. */
+.entry__meta-main {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-s);
+}
+
+.entry__meta .taglist {
+  margin-inline-start: auto;
+}
+
+/* --- Post card: optional feature image ------------------------------------ */
+.entry--post .entry__figure {
+  margin-block-end: var(--space-s);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+  border: var(--border-card);
+}
+
+.entry--post .entry__figure img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+/* --- Note card: micro post, no title, body is the headline ---------------- */
+.entry--note .entry__body {
+  font: var(--p);
+  margin-block: 0 var(--space-s);
+}
+
+/* --- Link card: Jim Nielsen layout ---------------------------------------- *
+ * Domain kicker -> title is an OUTBOUND link (thicker underline) ->
+ * short commentary -> footer with date (permalink) left, domain right. */
+/* Title sits at the same neutral weight as post titles, but keeps a permanent
+ * accent underline (and the arrow) so it still reads as an outbound link. */
+.entry--link .entry__title a,
+.post.link .post-header h2 a {
+  color: var(--heading);
+  text-decoration: underline;
+  text-decoration-color: var(--link-underline-color);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 10px;
+}
+
+.entry--link .entry__title a:hover,
+.post.link .post-header h2 a:hover {
+  color: var(--link-hover-color);
+  text-decoration-color: var(--link-hover-color);
+}
+
+/* Outbound arrow affordance on link titles — inherits the title colour. */
+.entry--link .entry__title a::after,
+.post.link .post-header h2 a::after {
+  content: " \2197"; /* north-east arrow */
+  font-size: 0.7em;
+  color: inherit;
+}
+
+/* "More from <domain>" link sits on the date line, de-emphasised. */
+.post.link .post-header__meta a {
+  color: var(--text-muted);
+  text-decoration-color: var(--border);
+  text-decoration-thickness: 1px;
+}
+
+.post.link .post-header__meta a:hover {
+  color: var(--link-hover-color);
+}
+
+/* Commentary is treated like a note body: full body type and colour (only the
+   Jim-Nielsen logical layout is borrowed, not his muted styling). */
+.entry--link .entry__commentary {
+  font: var(--p);
+  margin-block: var(--space-2xs) var(--space-s);
+}
+
+/* Domain kicker above a link card's title — links to that domain's archive. */
+.link-kicker {
+  font-family: var(--ff);
+  font-size: var(--fs-2xs);
+  margin-block-end: var(--space-2xs);
+}
+
+.link-kicker a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.link-kicker a:hover {
+  color: var(--link-hover-color);
+}
+
+/* --- Photo card: cover image + count -------------------------------------- */
+.entry--photo .entry__cover {
+  display: block;
+  margin-block-end: var(--space-s);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+  border: var(--border-card);
+}
+
+.entry--photo .entry__cover img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+
+/* =============================================================================
+   STREAM — compact dated rows (jason.re home: latest of everything)
+   ============================================================================= */
+
+.stream {
+  list-style: none;
+  margin-block-start: var(--space-xl);
+}
+
+/* "Browse the full archive" link, balanced with the about-text gap above. */
+.more-link {
+  margin-block-start: var(--space-xl);
+  text-align: right;
+}
+
+/* Three aligned columns: coloured type | title/snippet | date. The type sits
+   in a tidy left column (not a full-width band) so it cues + colours each row
+   without chopping the list into blocks; columns keep everything ordered. */
+.stream__item {
+  display: grid;
+  grid-template-columns: max-content 1fr max-content;
+  align-items: baseline;
+  column-gap: var(--space-m);
+  padding-block: var(--space-2xs);
+}
+
+/* Shared post-type marker icon (stream rows, archive, search results). The mask
+   inherits colour via background-color; aligned to the first line so it stays
+   put when text wraps. One glyph per post type. */
+.type-icon {
+  align-self: start;
+  margin-block-start: 0.15em;
+  width: 1.05em;
+  height: 1.05em;
+  background-color: var(--text-muted);
+  -webkit-mask: center / contain no-repeat;
+  mask: center / contain no-repeat;
+}
+
+.type-icon--post   { -webkit-mask-image: var(--icon-post);   mask-image: var(--icon-post); }
+.type-icon--note   { -webkit-mask-image: var(--icon-note);   mask-image: var(--icon-note); }
+.type-icon--photos { -webkit-mask-image: var(--icon-photos); mask-image: var(--icon-photos); }
+.type-icon--link   { -webkit-mask-image: var(--icon-link);   mask-image: var(--icon-link); }
+
+/* All entries share one regular weight; the coloured type tag (POST/NOTE) and
+   the content itself distinguish post titles from note excerpts. The title
+   link keeps the site's standard link styling (underline via the base `a`). */
+.stream__title {
+  font-family: var(--ff);
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  line-height: var(--lh-tight);
+}
+
+.stream__date {
+  font-family: var(--ff);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* =============================================================================
+   PHOTO GRID & GALLERY
+   ============================================================================= */
+
+.photo-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  gap: var(--space-s);
+}
+
+.photo-grid__item {
+  position: relative;
+  border-radius: var(--radius-m);
+  overflow: hidden;
+  border: var(--border-card);
+  background: var(--bg-light);
+}
+
+.photo-grid__item img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.photo-grid__item:hover img {
+  transform: scale(1.04);
+}
+
+/* Caption overlay on grid thumbs (gallery cards). */
+.photo-grid__caption {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
+  padding: var(--space-l) var(--space-2xs) var(--space-2xs);
+  font-family: var(--ff);
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  color: #fff;
+  /* Dark scrim + text shadow keep the title legible over light OR dark photos,
+   * without per-image colour detection. */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.45) 45%, transparent);
+}
+
+/* Post pages: text columns sit at a reading measure, centered, while the
+   feature image / gallery break out to the full wide column. */
+.post > .post-header,
+.post > .post-summary,
+.post > .post-body,
+.post > .post-footer {
+  max-width: var(--measure);
+  margin-inline: auto;
+}
+
+/* Single-post header block spacing. */
+.post-header {
+  margin-block-end: var(--space-l);
+}
+
+/* Footer separating long-form content from tags / back-links. */
+.post-footer {
+  margin-block-start: var(--space-xl);
+  padding-block-start: var(--space-m);
+  border-block-start: 1px solid var(--border);
+}
+
+/* Authored summary/standfirst for long-form posts: a muted serif lead between
+   the header and the body (only shown when frontmatter sets `summary`). The
+   wrapper carries the reading-column width (measured in the body's font
+   context, so it matches the body exactly); the inner <p> carries the larger
+   serif type — keeping the box width independent of the lead's font size. */
+.post-summary {
+  margin-block: var(--space-l);
+}
+
+.post-summary p {
+  margin: 0;
+  font-family: var(--ff-serif);
+  font-size: var(--fs-m);
+  color: var(--text-muted);
+  line-height: var(--lh-snug);
+}
+
+/* Post header meta: date / count grouped left, tags pushed to the right. */
+.post-header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2xs) var(--space-s);
+  font-family: var(--ff);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.post-header__meta-main {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-s);
+}
+
+.post-header__meta time {
+  font-variant-numeric: tabular-nums;
+}
+
+.post-header__meta .taglist {
+  margin-inline-start: auto;
+}
+
+/* Feature image: breaks out wider than the text, like the gallery. */
+.post__feature {
+  margin-block: var(--space-xl);
+  border-radius: var(--radius-l);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.post__feature img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Single gallery: a uniform square grid of thumbnails that open in a lightbox. */
+.gallery {
+  width: 100%;
+  margin-block-start: var(--space-xl);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-s);
+}
+
+@media (max-width: 50rem) {
+  .gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.gallery__item {
+  display: block;
+  aspect-ratio: 1;
+  text-decoration: none;
+  cursor: zoom-in;
+}
+
+.gallery__item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-m);
+  object-fit: cover;
+  box-shadow: var(--shadow-m);
+}
+
+.gallery__item:focus-visible img {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Lightbox overlay. */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.92);
+  padding: var(--space-s);
+}
+
+.lightbox.is-open {
+  display: flex;
+}
+
+.lightbox__figure {
+  margin: 0;
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2xs);
+}
+
+.lightbox__img {
+  max-width: 100%;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.lightbox__caption {
+  font: var(--p3);
+  color: rgba(255, 255, 255, 0.85);
+  text-align: center;
+}
+
+.lightbox__btn {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: none;
+  border-radius: 0.25rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.lightbox__btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.lightbox__btn::before {
+  content: "";
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: currentColor;
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+}
+
+.lightbox__close {
+  top: var(--space-s);
+  right: var(--space-s);
+  --icon: var(--icon-x);
+}
+
+.lightbox__prev {
+  left: var(--space-s);
+  top: 50%;
+  transform: translateY(-50%);
+  --icon: var(--icon-chevron-left);
+}
+
+.lightbox__next {
+  right: var(--space-s);
+  top: 50%;
+  transform: translateY(-50%);
+  --icon: var(--icon-chevron-right);
+}
+
+@media (max-width: 40rem) {
+  .lightbox__prev { left: var(--space-2xs); }
+  .lightbox__next { right: var(--space-2xs); }
+}
+
+/* =============================================================================
+   TAGS
+   ============================================================================= */
+
+.taglist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  list-style: none;
+}
+
+/* Tags index (/tags/): roomier than inline tag rows — a bit more horizontal
+   space between chips than vertical between wrapped rows. */
+.taglist--cloud {
+  gap: var(--space-xs) var(--space-s);
+}
+
+/* Tags ARE badges (.badge.badge-secondary). This class only adds the two
+ * tag-specific touches: lowercase text and a leading tag glyph. All colour,
+ * shape, and sizing come from the tinycss badge system. */
+.tag {
+  font-size: var(--fs-2xs);
+  text-decoration: none;
+  text-transform: lowercase;
+}
+
+/* Don't inherit the global link visited/active colours (avoids the white-on-
+ * click); the outline keeps its secondary colour when not hovered. */
+.tag:visited,
+.tag:active {
+  color: var(--secondary);
+  text-decoration: none;
+}
+
+/* Hover fills the outline chip with its secondary colour (matches the solid
+ * badge-secondary look). */
+/* Hover: a gentle translucent tint of the secondary (not a solid fill — that
+ * read as too heavy). Keep the coloured text so the global a:hover can't
+ * recolour it. */
+.tag:hover {
+  background-color: color-mix(in srgb, var(--secondary) 14%, transparent);
+  color: var(--secondary);
+  text-decoration: none;
+}
+
+/* In light mode a bare outline on near-white reads as washed out; give the
+ * chip a faint tonal fill so the blue has body. The 55%/96.5% is the one
+ * intentionally hand-tuned value left in the system — hue-linked but not
+ * derivable from an existing token (softer/lighter than --secondary-lightest).
+ * Kept as a documented exception rather than a single-use token. */
+:root[data-theme=light] .tag {
+  background-color: hsl(var(--alt-hue), 55%, 96.5%);
+}
+
+/* Light hover must out-specify the fill above; deepen the tint a touch. */
+:root[data-theme=light] .tag:hover {
+  background-color: color-mix(in srgb, var(--secondary) 15%, transparent);
+}
+
+/* Bootstrap-icons "tag" glyph, inlined as a mask so it inherits the badge's
+ * currentColor. */
+.tag::before {
+  content: "";
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  margin-inline-end: 0.4em;
+  vertical-align: -0.1em;
+  background-color: currentColor;
+  -webkit-mask: var(--icon-tag) center / contain no-repeat;
+  mask: var(--icon-tag) center / contain no-repeat;
+}
+
+/* =============================================================================
+   PAGINATION
+   ============================================================================= */
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-s);
+  margin-block-start: var(--space-xl);
+  padding-block-start: var(--space-m);
+  border-block-start: 1px solid var(--border);
+  font-family: var(--ff);
+}
+
+.pagination a,
+.pagination span {
+  font-size: var(--fs-2xs);
+}
+
+.pagination__page {
+  color: var(--text-muted);
+}
+
+/* =============================================================================
+   ARCHIVE
+   ============================================================================= */
+
+.archive__year {
+  font: var(--h4);
+  margin-block: var(--space-l) var(--space-s);
+  padding-block-end: var(--space-2xs);
+  border-block-end: 1px solid var(--border);
+}
+
+.archive__list {
+  list-style: none;
+}
+
+/* Same scheme as the stream: coloured type | title | date. */
+.archive__item {
+  display: grid;
+  grid-template-columns: max-content 1fr max-content;
+  align-items: baseline;
+  gap: var(--space-s);
+  padding-block: var(--space-2xs);
+}
+
+/* Type marker is the shared .type-icon (see above). */
+
+/* Rows mirror the stream: title uses the site's standard link styling (base `a`
+   underline) and the same --fs-xs size; date matches for a uniform row. */
+.archive__link {
+  font-family: var(--ff);
+  font-size: var(--fs-xs);
+}
+
+.archive__date {
+  font-family: var(--ff);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* =============================================================================
+   SEARCH
+   ============================================================================= */
+
+.search {
+  margin-block-end: var(--space-xl);
+}
+
+.search__input {
+  width: 100%;
+  padding: var(--space-s) var(--space-m);
+  font: var(--p);
+  color: var(--text);
+  background: var(--bg-light);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+}
+
+.search__input:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-color: var(--primary);
+}
+
+.search__status {
+  margin-block-start: var(--space-2xs);
+  font: var(--p2);
+  color: var(--text-muted);
+}
+
+.search__results {
+  list-style: none;
+}
+
+.search__results:not(:empty) {
+  margin-block-start: var(--space-l);
+}
+
+/* Responsive: collapse archive rows on small screens (type + title on the
+   first line, date wraps to its own line below). */
+@media (max-width: 36rem) {
+  .archive__item {
+    grid-template-columns: max-content 1fr;
+  }
+
+  .archive__date {
+    grid-column: 1 / -1;
+  }
 }
