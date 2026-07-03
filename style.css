@@ -648,7 +648,7 @@ blockquote cite {
 
 .prose figcaption {
   margin-block-start: var(--prose-space-list-item);
-  font: var(--p2);
+  font: var(--p3);
   color: var(--text-muted);
 }
 
