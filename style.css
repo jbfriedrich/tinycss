@@ -1267,7 +1267,7 @@ button.badge:focus-visible {
 
 /* Each card is separated by a hairline rule rather than a box, Alpine-style. */
 .entry {
-  padding-block: var(--space-l);
+  padding-block: var(--space-xl);
   border-block-start: 1px solid var(--border);
 }
 
@@ -1880,6 +1880,7 @@ button.badge:focus-visible {
   font-size: var(--fs-xs);
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 /* =============================================================================
@@ -1918,16 +1919,4 @@ button.badge:focus-visible {
 
 .search__results:not(:empty) {
   margin-block-start: var(--space-l);
-}
-
-/* Responsive: collapse archive rows on small screens (type + title on the
-   first line, date wraps to its own line below). */
-@media (max-width: 36rem) {
-  .archive__item {
-    grid-template-columns: max-content 1fr;
-  }
-
-  .archive__date {
-    grid-column: 1 / -1;
-  }
 }
