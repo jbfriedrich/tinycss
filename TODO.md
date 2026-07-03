@@ -302,9 +302,9 @@ Once browser support is acceptable for your user base:
 - [ ] Add dark mode shadow overrides for better visibility
 - [ ] Test shadow visibility across both light and dark themes
 
-### Summit theme (blog components, now in style.css)
+### Blog components (now in style.css)
 
-- [ ] Photo-grid captions: optional JS to sample each thumbnail's brightness on load and toggle a `caption--light` / `caption--dark` class, inverting text/scrim per image (white-on-dark for light photos, dark-on-light for dark photos). Current approach is a fixed dark scrim + text-shadow that stays legible on any image without JS — revisit only if the per-image inversion is wanted.
+- [ ] Photo-grid captions: optional JS to sample each thumbnail's brightness on load and toggle a `caption--light` / `caption--dark` class, inverting text/scrim per image (white-on-dark for light photos, dark-on-light for dark photos). The current approach is a fixed dark scrim + text-shadow that stays legible on any image without JS — revisit only if per-image inversion is wanted.
 
 ### Future (OKLCH Migration)
 - [ ] Create OKLCH color conversion chart for current palette

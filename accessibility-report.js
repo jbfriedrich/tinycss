@@ -72,13 +72,17 @@ const themes = {
     bg: [0, 0, 5],
     text: [0, 0, 95],
     badgeTextOnLight: [0, 0, 0],
-    badgeTextOnDark: [0, 0, 100]
+    badgeTextOnDark: [0, 0, 100],
+    link: [320, 80, 48],          // --link-color = --primary
+    secondaryBase: [220, 80, 50]  // --secondary
   },
   light: {
     bg: [0, 0, 95],
     text: [0, 0, 5],
     badgeTextOnLight: [0, 0, 5],
-    badgeTextOnDark: [0, 0, 100]
+    badgeTextOnDark: [0, 0, 100],
+    link: [320, 80, 38],          // light mode darkens links to ~38% L for AA on white
+    secondaryBase: [220, 80, 40]  // light mode deepens --secondary to 40% L
   }
 };
 
@@ -89,6 +93,10 @@ const results = {
 
 // Test all combinations
 for (const [themeName, theme] of Object.entries(themes)) {
+
+  // Per-theme colour overrides: light mode deepens the --secondary base to 40% L.
+  const tc = structuredClone(colors);
+  tc.secondary.base = theme.secondaryBase;
 
   // 1. Body text on background
   const bodyTextResult = checkWCAG(getContrast(theme.text, theme.bg));
@@ -115,55 +123,55 @@ for (const [themeName, theme] of Object.entries(themes)) {
   else results[themeName].fail++;
 
   // 3. Primary button
-  const primaryBtnResult = checkWCAG(getContrast(theme.badgeTextOnDark, colors.primary.base));
+  const primaryBtnResult = checkWCAG(getContrast(theme.badgeTextOnDark, tc.primary.base));
   results[themeName].tests.push({
     category: 'Buttons',
     element: 'Primary button',
     fg: formatHSL(theme.badgeTextOnDark),
-    bg: formatHSL(colors.primary.base),
+    bg: formatHSL(tc.primary.base),
     ...primaryBtnResult
   });
   if (primaryBtnResult.aa) results[themeName].pass++;
   else results[themeName].fail++;
 
   // 4. Primary button hover
-  const primaryBtnHoverResult = checkWCAG(getContrast(theme.badgeTextOnDark, colors.primary.darker));
+  const primaryBtnHoverResult = checkWCAG(getContrast(theme.badgeTextOnDark, tc.primary.darker));
   results[themeName].tests.push({
     category: 'Buttons',
     element: 'Primary button (hover)',
     fg: formatHSL(theme.badgeTextOnDark),
-    bg: formatHSL(colors.primary.darker),
+    bg: formatHSL(tc.primary.darker),
     ...primaryBtnHoverResult
   });
   if (primaryBtnHoverResult.aa) results[themeName].pass++;
   else results[themeName].fail++;
 
   // 5. Secondary button
-  const secondaryBtnResult = checkWCAG(getContrast(theme.badgeTextOnDark, colors.secondary.base));
+  const secondaryBtnResult = checkWCAG(getContrast(theme.badgeTextOnDark, tc.secondary.base));
   results[themeName].tests.push({
     category: 'Buttons',
     element: 'Secondary button',
     fg: formatHSL(theme.badgeTextOnDark),
-    bg: formatHSL(colors.secondary.base),
+    bg: formatHSL(tc.secondary.base),
     ...secondaryBtnResult
   });
   if (secondaryBtnResult.aa) results[themeName].pass++;
   else results[themeName].fail++;
 
   // 6. Secondary button hover
-  const secondaryBtnHoverResult = checkWCAG(getContrast(theme.badgeTextOnDark, colors.secondary.darker));
+  const secondaryBtnHoverResult = checkWCAG(getContrast(theme.badgeTextOnDark, tc.secondary.darker));
   results[themeName].tests.push({
     category: 'Buttons',
     element: 'Secondary button (hover)',
     fg: formatHSL(theme.badgeTextOnDark),
-    bg: formatHSL(colors.secondary.darker),
+    bg: formatHSL(tc.secondary.darker),
     ...secondaryBtnHoverResult
   });
   if (secondaryBtnHoverResult.aa) results[themeName].pass++;
   else results[themeName].fail++;
 
   // 7. All solid badges
-  for (const [colorName, shades] of Object.entries(colors)) {
+  for (const [colorName, shades] of Object.entries(tc)) {
     for (const [shadeName, bgColor] of Object.entries(shades)) {
       const isLightBg = ['lightest', 'light', 'lighter'].includes(shadeName);
       const textColor = isLightBg ? theme.badgeTextOnLight : theme.badgeTextOnDark;
@@ -182,7 +190,7 @@ for (const [themeName, theme] of Object.entries(themes)) {
   }
 
   // 8. All outline badges
-  for (const [colorName, shades] of Object.entries(colors)) {
+  for (const [colorName, shades] of Object.entries(tc)) {
     for (const [shadeName, badgeColor] of Object.entries(shades)) {
       const outlineResult = checkWCAG(getContrast(badgeColor, theme.bg));
 
@@ -211,8 +219,8 @@ for (const [themeName, theme] of Object.entries(themes)) {
   else results[themeName].fail++;
 
   // 10. Code block (pre)
-  const codeBlockTextColor = colors.secondary.lighter;
-  const codeBlockBgColor = colors.primary.darkest;
+  const codeBlockTextColor = tc.secondary.lighter;
+  const codeBlockBgColor = tc.primary.darkest;
   const codeBlockResult = checkWCAG(getContrast(codeBlockTextColor, codeBlockBgColor));
   results[themeName].tests.push({
     category: 'Code Elements',
@@ -224,12 +232,12 @@ for (const [themeName, theme] of Object.entries(themes)) {
   if (codeBlockResult.aa) results[themeName].pass++;
   else results[themeName].fail++;
 
-  // 11. Links
-  const linkResult = checkWCAG(getContrast(colors.primary.base, theme.bg));
+  // 11. Links (theme-specific: light mode darkens to ~38% L for AA on white)
+  const linkResult = checkWCAG(getContrast(theme.link, theme.bg));
   results[themeName].tests.push({
     category: 'Links',
     element: 'Link color',
-    fg: formatHSL(colors.primary.base),
+    fg: formatHSL(theme.link),
     bg: formatHSL(theme.bg),
     ...linkResult
   });

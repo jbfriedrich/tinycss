@@ -31,6 +31,26 @@ Three font stacks:
 
 Headings use a Major Third scale (1.25 ratio), which gives good visual hierarchy without being too dramatic.
 
+## Design tokens
+
+Everything is a CSS custom property, so you re-theme by changing variables rather than rules:
+
+- **Colours** — `--hue` / `--alt-hue` drive the `--primary*` and `--secondary*` shade ramps (7 each); per-theme `--bg*`, `--text*`, `--border`, `--link-*`, and `--heading` (pure black/white so titles pop).
+- **Surface tint** — `--surface-hue` / `--surface-sat` (neutral by default) tint every background from one place. Because the tint vanishes at 100% lightness, you get "neutral-white chrome over faintly-tinted paper" for free.
+- **Font sizes** — a t-shirt scale `--fs-4xs` … `--fs-4xl` for any non-heading size (headings use `--h1`…`--h6`; body uses `--p` / `--p2` / `--p3`).
+- **Spacing** — `--space-3xs` … `--space-3xl`.
+- **Radius** — `--radius-s/m/l`.
+- **Line height** — `--lh-tight/snug/base`, for UI text outside `.prose`.
+- **Shadows** — plain drops `--shadow-xs` (+ its upward mirror `--shadow-xs-up`) and `--shadow`, plus a card scale with inset highlights `--shadow-s/m/l`.
+
+See `demo.html` for every one of these on a page.
+
+## A couple of things worth knowing
+
+- **Near white, luminance contrast disappears but hue contrast survives.** A faintly-tinted "paper" surface reads as distinct from white chrome, whereas a slightly-grey chrome just looks dated — the surface-tint tokens lean on this.
+- **The same `rem` is not the same apparent size across fonts.** A sans face with a large x-height looks bigger than a serif at the same size, so UI text and reading text usually want different sizes, not just different families.
+- **Relative colours** (`hsl(from var(--primary) h s 38%)`) derive hover/visited/light-mode variants without extra variables — but they depend on significant spaces, so always minify with a **CSS-aware** tool.
+
 ## Prose styling
 
 The `.prose` class handles vertical rhythm for blog posts and articles. There are also a few variants I use for different content types:
@@ -50,7 +70,8 @@ layout container, site header/nav + theme toggle, footer, feed cards (`.entry`,
 are built on the same tokens, so the one-hue re-theming applies to them too — there's
 nothing extra to include, it's all in the single `style.css`.
 
-These power the **Summit** Hugo theme (`../summit`).
+The class names are a flat, BEM-ish convention, so any static-site generator or
+hand-written HTML can use them — a blog theme just needs to emit the matching markup.
 
 ## Quick start
 
@@ -79,14 +100,16 @@ style.css                 - The complete framework: design system (tokens, reset
                             typography, prose, badges) + blog components (header, feed
                             cards, stream, photo grid, gallery, tags, archive, search)
 demo.html                 - Examples of everything
-accessibility-report.js   - Run with Node to check WCAG contrast compliance
-accessibility-report.html - Generated report showing pass/fail for all color combos
+accessibility-report.js   - Run to check WCAG contrast compliance (node accessibility-report.js,
+                            or deno run --unstable-detect-cjs -A accessibility-report.js)
+accessibility-report.html - Generated report showing pass/fail for all colour combos
 ```
 
-> **Minifying:** there's no pre-built `.min.css` — consumers minify at build time (the
-> Summit theme bundles + minifies via Hugo Pipes). If you minify standalone, use a
-> **CSS-aware** minifier: the relative-colour syntax `hsl(from var(--primary) h s 38%)`
-> relies on significant spaces, so naive whitespace-stripping will corrupt it.
+> **Minifying:** there's no pre-built `.min.css` — a project using this framework would
+> minify at build time (for example, through its static-site generator's asset pipeline).
+> If you minify standalone, use a **CSS-aware** minifier: the relative-colour syntax
+> `hsl(from var(--primary) h s 38%)` relies on significant spaces, so naive
+> whitespace-stripping will corrupt it.
 
 ## Resources that helped me
 
