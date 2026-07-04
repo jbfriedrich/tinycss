@@ -1333,10 +1333,10 @@ button.badge:focus-visible {
 
 /* --- Post card: optional feature image ------------------------------------ */
 .entry--post .entry__figure {
+  display: block;
   margin-block-end: var(--space-s);
   border-radius: var(--radius-m);
   overflow: hidden;
-  border: var(--border-card);
 }
 
 .entry--post .entry__figure img {
