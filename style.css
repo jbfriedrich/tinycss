@@ -503,6 +503,8 @@ pre {
   padding: var(--space-m);
   border-radius: var(--radius-m);
   overflow-x: auto;
+  white-space: pre-wrap;      /* wrap long lines instead of scrolling sideways */
+  overflow-wrap: anywhere;    /* break unbreakable tokens (long paths/URLs) too */
   line-height: 1.5;
   border: var(--border-card);
 }
