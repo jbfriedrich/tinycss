@@ -393,14 +393,16 @@ ol[role='list'] {
 :root[data-theme=light] {
   /* Surfaces flow through the surface-tint knob: a faint warmth reads as
    * "paper" and keeps depth visible near white (hue contrast survives where a
-   * luminance step would not). --bg-chrome stays pure white (tint vanishes at
-   * 100% L), giving neutral chrome over warm paper. */
+   * luminance step would not). --bg-light is the bright reading surface;
+   * --bg-chrome is a deeper, desaturated warm-neutral for the header/footer,
+   * so content pops between the chrome bars — mirroring how dark mode's content
+   * sits lighter than its chrome. */
   --surface-hue: 40;
   --surface-sat: 44%;   /* heavier "cream" overall: raise toward ~55% to deepen the tint on every surface */
   --bg-dark:   hsl(var(--surface-hue), var(--surface-sat), 90%);
   --bg:        hsl(var(--surface-hue), var(--surface-sat), 95%);
   --bg-light:  hsl(var(--surface-hue), var(--surface-sat), 98.3%);  /* heavier cream on the reading paper: lower L to 97.5% */
-  --bg-chrome: hsl(var(--surface-hue), var(--surface-sat), 100%);
+  --bg-chrome: hsl(var(--surface-hue), 16%, 94.5%);  /* header/footer: warm-neutral, a touch deeper + desaturated vs the paper so chrome reads as a distinct band */
   --bg-blockquote: oklch(96% 0.02 var(--alt-hue));
   /* The base --secondary (L 62) washes out as a thin outline on near-white;
    * deepen it in light mode (like links) so tags/accents read with weight. */
@@ -1065,11 +1067,12 @@ button.badge:focus-visible {
   background: var(--bg);
 }
 
-/* Light mode: crisp neutral-white chrome against the faintly-warm "paper" of
- * the main content (--bg-light). The tint difference gives header/footer vs.
- * main the subtle surface distinction that makes dark mode pop, without a
- * dated grey band. The header casts a soft shadow (reusing --shadow) so the
- * content reads as sitting beneath it. (Dark mode keeps its own layered look.) */
+/* Light mode: a warm-neutral chrome (--bg-chrome), a touch deeper and less
+ * saturated than the cream "paper" of the main content (--bg-light), so the
+ * content reads as the brighter surface between the header/footer bars —
+ * mirroring the distinction dark mode gets for free. Soft shadows reinforce it,
+ * and the warm-neutral tone avoids a dated flat grey. (Dark mode keeps its own
+ * layered look via --bg vs --bg-light.) */
 :root[data-theme=light] .site-header,
 :root[data-theme=light] .site-footer {
   background: var(--bg-chrome);
