@@ -372,14 +372,16 @@ ol[role='list'] {
   /* Text selection */
   --selection-bg: var(--secondary-dark);
   --selection-text: var(--text);
-  /* Links: base magenta, brighter neon on hover, desaturated when visited.
-   * oklch(from …) keeps the hue tracking --primary so re-theming still works. */
-  --link-color: var(--primary);
+  /* Links: base --primary (L62) is only ~4.2:1 on the elevated --bg-light
+   * content surface (.site-main), so lift links to L65 to clear AA there;
+   * brighter neon on hover, desaturated + still AA on visit. oklch(from …)
+   * keeps the hue tracking --primary so re-theming still works. */
+  --link-color: oklch(from var(--primary) 0.65 0.24 h);
   --link-hover-color: oklch(from var(--primary) 0.8 0.13 h);
-  --link-underline-color: var(--primary);
+  --link-underline-color: oklch(from var(--primary) 0.65 0.24 h);
   --link-underline-hover-color: oklch(from var(--primary) 0.8 0.13 h);
-  --link-visited-color: oklch(from var(--primary) 0.6 0.13 h);
-  --link-visited-underline-color: oklch(from var(--primary) 0.6 0.13 h);
+  --link-visited-color: oklch(from var(--primary) 0.63 0.13 h);
+  --link-visited-underline-color: oklch(from var(--primary) 0.63 0.13 h);
   /* Badge contrast */
   --badge-text-on-light-bg: hsl(0, 0%, 0%);
   /* TODO: Take a look at tertiary and accent colors later */
