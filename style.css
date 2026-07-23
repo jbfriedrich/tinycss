@@ -321,6 +321,8 @@ ol[role='list'] {
    *   3. soft spread shadow (ambient occlusion) */
   --shadow-xs: 0px 1px 2px hsla(0, 0%, 0%, 0.05), 0px 2px 4px hsla(0, 0%, 0%, 0.09);
   --shadow-xs-up: 0px -1px 2px hsla(0, 0%, 0%, 0.05), 0px -2px 4px hsla(0, 0%, 0%, 0.09);  /* mirror of --shadow-xs, casts upward (e.g. footer top edge) */
+  --shadow-chrome: 0 2px 4px hsla(0, 0%, 0%, 0.06), 0 6px 16px hsla(0, 0%, 0%, 0.10);       /* soft float for light-mode header — distinguishes chrome by elevation, not a fill band */
+  --shadow-chrome-up: 0 -2px 4px hsla(0, 0%, 0%, 0.06), 0 -6px 16px hsla(0, 0%, 0%, 0.10);  /* upward mirror, for the footer */
   --shadow: 0px 2px 2px hsla(0, 0%, 0%, 0.07), 0px 4px 4px hsla(0, 0%, 0%, 0.15);
   --shadow-s: inset 0 1px 2px #ffffff30,
               0 1px 2px #00000030,
@@ -393,16 +395,16 @@ ol[role='list'] {
 :root[data-theme=light] {
   /* Surfaces flow through the surface-tint knob: a faint warmth reads as
    * "paper" and keeps depth visible near white (hue contrast survives where a
-   * luminance step would not). --bg-light is the bright reading surface;
-   * --bg-chrome is a deeper, desaturated warm-neutral for the header/footer,
-   * so content pops between the chrome bars — mirroring how dark mode's content
-   * sits lighter than its chrome. */
+   * luminance step would not). Light mode keeps chrome white (--bg-chrome) and
+   * separates it from the paper by ELEVATION (a soft float shadow), not a tint
+   * band — a fill band reads as a dated toolbar at full width. Dark mode uses a
+   * tone step instead (content lighter than chrome), since shadows don't show on black. */
   --surface-hue: 40;
   --surface-sat: 44%;   /* heavier "cream" overall: raise toward ~55% to deepen the tint on every surface */
   --bg-dark:   hsl(var(--surface-hue), var(--surface-sat), 90%);
   --bg:        hsl(var(--surface-hue), var(--surface-sat), 95%);
   --bg-light:  hsl(var(--surface-hue), var(--surface-sat), 98.3%);  /* heavier cream on the reading paper: lower L to 97.5% */
-  --bg-chrome: hsl(var(--surface-hue), 16%, 94.5%);  /* header/footer: warm-neutral, a touch deeper + desaturated vs the paper so chrome reads as a distinct band */
+  --bg-chrome: hsl(var(--surface-hue), var(--surface-sat), 100%);  /* header/footer stay white; distinction comes from elevation (--shadow-chrome), not a tint band */
   --bg-blockquote: oklch(96% 0.02 var(--alt-hue));
   /* The base --secondary (L 62) washes out as a thin outline on near-white;
    * deepen it in light mode (like links) so tags/accents read with weight. */
@@ -1067,35 +1069,30 @@ button.badge:focus-visible {
   background: var(--bg);
 }
 
-/* Light mode: a warm-neutral chrome (--bg-chrome), a touch deeper and less
- * saturated than the cream "paper" of the main content (--bg-light), so the
- * content reads as the brighter surface between the header/footer bars —
- * mirroring the distinction dark mode gets for free. Soft shadows reinforce it,
- * and the warm-neutral tone avoids a dated flat grey. (Dark mode keeps its own
- * layered look via --bg vs --bg-light.) */
+/* Light mode: chrome stays white (--bg-chrome) and is set apart from the cream
+ * "paper" content by ELEVATION — the header/footer float via a soft shadow —
+ * not a tint band (a fill band reads as a dated toolbar at scale). Dark mode
+ * instead uses a tone step (content lighter than chrome), since shadows don't
+ * register on black. */
 :root[data-theme=light] .site-header,
 :root[data-theme=light] .site-footer {
   background: var(--bg-chrome);
 }
 
 :root[data-theme=light] .site-header {
-  /* Lift above .site-main so the downward shadow paints over the content
-   * surface instead of being covered by main's opaque background. */
+  /* Lift above .site-main so the float shadow paints over the content surface
+   * instead of being covered by main's opaque background. */
   position: relative;
   z-index: 1;
-  box-shadow: var(--shadow-xs);
-  /* For a stronger cast, swap to the full drop shadow: */
-  /* box-shadow: var(--shadow); */
+  box-shadow: var(--shadow-chrome);
 }
 
-/* Footer mirrors the header: an upward shadow on its top edge so the content
- * above sits in a recessed well framed by both raised chrome bars. */
+/* Footer mirrors the header: an upward float shadow on its top edge so the
+ * content above sits in a well framed by both raised chrome bars. */
 :root[data-theme=light] .site-footer {
   position: relative;
   z-index: 1;
-  box-shadow: var(--shadow-xs-up);
-  /* Stronger cast (upward mirror of --shadow — no token for it yet): */
-  /* box-shadow: 0 -2px 2px hsla(0,0%,0%,0.07), 0 -4px 4px hsla(0,0%,0%,0.15); */
+  box-shadow: var(--shadow-chrome-up);
 }
 
 .site-header__inner {
