@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>tinycss — colour combinations</title>
+<style>
+  :root{ --ff: ui-sans-serif, system-ui, sans-serif; --serif: Georgia, "Times New Roman", serif; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:var(--ff); background:#0d0d0f; color:#e8e8ea; line-height:1.5; }
+  header{ max-width:1100px; margin:0 auto; padding:48px 24px 8px; }
+  header h1{ font-size:1.9rem; margin:0 0 .4rem; letter-spacing:-.01em; }
+  header p{ color:#a0a0a8; max-width:64ch; margin:.3rem 0; }
+  header code{ background:#1c1c20; padding:.1em .4em; border-radius:4px; font-size:.9em; }
+  .legend{ font-size:.85rem; color:#8a8a92; }
+  main{ max-width:1100px; margin:0 auto; padding:24px; display:grid; gap:28px; }
+
+  .combo{ border:1px solid #26262b; border-radius:14px; overflow:hidden; background:#141417; }
+  .combo__head{ display:flex; flex-wrap:wrap; align-items:center; gap:12px; padding:14px 18px; border-bottom:1px solid #26262b; }
+  .combo__name{ font-weight:700; font-size:1.05rem; }
+  .combo__swatches{ display:flex; gap:6px; }
+  .sw{ width:22px; height:22px; border-radius:5px; box-shadow:inset 0 0 0 1px #ffffff22; }
+  .combo__hues{ font-size:.82rem; color:#8a8a92; font-variant-numeric:tabular-nums; }
+  .badge{ font-size:.72rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase;
+          padding:3px 8px; border-radius:999px; background:#23231a; color:#d8c98a; border:1px solid #4a4527; }
+  .badge--oos{ background:#132022; color:#8ad0d8; border-color:#28494d; }
+  .combo__panels{ display:grid; grid-template-columns:1fr 1fr; }
+  @media (max-width:720px){ .combo__panels{ grid-template-columns:1fr; } }
+
+  .panel{ padding:20px 22px; }
+  .panel--dark{ background:hsl(0 0% 10%); color:hsl(0 0% 92%); }           /* --bg-light: content surface */
+  .panel--light{ background:hsl(40 30% 98.3%); color:hsl(0 0% 12%); border-left:1px solid #26262b; }
+  @media (max-width:720px){ .panel--light{ border-left:0; border-top:1px solid #26262b; } }
+  .panel__mode{ font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; opacity:.5; margin:0 0 14px; }
+
+  .rule{ height:3px; border:0; border-block-end:3px solid; border-image:linear-gradient(90deg,var(--pri),var(--sec)) 1; margin:0 0 14px; }
+  .lede{ font-family:var(--serif); font-size:1rem; margin:0 0 14px; }
+  .lede a{ color:var(--link); text-decoration:underline; text-underline-offset:2px; text-decoration-color:var(--link); }
+  .lede code{ color:var(--sec); background:var(--codebg); padding:.08em .35em; border-radius:4px; font-size:.85em; }
+  .tags{ display:flex; flex-wrap:wrap; gap:7px; margin:0 0 14px; list-style:none; padding:0; }
+  .tags a{ font-size:.75rem; font-weight:600; text-transform:lowercase; text-decoration:none; color:var(--sec);
+           border:1px solid var(--sec); background:var(--tagfill); padding:4px 10px; border-radius:999px; }
+  .btns{ display:flex; gap:8px; margin:0 0 14px; }
+  .btns a{ font-size:.8rem; font-weight:600; padding:7px 13px; border-radius:7px; text-decoration:none; }
+  .btns .p{ background:var(--pri); color:#fff; }
+  .btns .s{ color:var(--sec); border:1px solid var(--sec); }
+  blockquote{ margin:0; font-family:var(--serif); font-style:italic; font-size:.92rem;
+              border-inline-start:3px solid var(--sec); background:var(--bqbg); padding:10px 14px; border-radius:0 6px 6px 0; }
+</style></head>
+<body>
+<header>
+  <h1>tinycss — colour combinations</h1>
+  <p>Every palette below is generated from just two OKLCH hue angles — a <strong>primary</strong>
+     (the hero: links, buttons) and a <strong>secondary</strong> (orientation: tags, focus, code,
+     blockquotes). Set them with <code>--hue</code> / <code>--alt-hue</code> and the whole ramp,
+     in light and dark, follows.</p>
+  <p class="legend">Rendered with the real shared-ramp chroma, so what you see is what you get
+     (cool hues gamut-map to a calmer primary). All combinations shown clear <strong>WCAG&nbsp;AA</strong>.
+     See <a href="Colors.md" style="color:#9ab7ff">Colors.md</a> for the full rationale.</p>
+</header>
+<main id="gallery"></main>
+<script>
+  // [name, primaryHue, secondaryHue, usedBy]
+  const combos = [
+    ["Magenta + indigo", 347, 227, "jason.re"],
+    ["Amber + teal",      65, 195, "outofscope.blog"],
+    ["Violet + cyan",    300, 215, null],
+    ["Green + magenta",  145, 347, null],
+    ["Orange + blue",     35, 250, null],
+    ["Red + teal",        25, 190, null],
+    ["Purple + lime",    310, 130, null],
+    ["Rose + slate-blue", 10, 260, null],
+  ];
+  // shared-ramp derivations (identical to the tinycss theme tokens)
+  const priBase = h => `oklch(62% 0.25 ${h})`;
+  const D = h => ({ link:`oklch(65% 0.24 ${h})`, sec:`oklch(62% 0.105 ${h})`, tagfill:"transparent",
+                    bqbg:`oklch(25% 0.049 ${h})`, codebg:`color-mix(in srgb, oklch(62% 0.105 ${h}) 14%, transparent)` });
+  const L = h => ({ link:`oklch(52% 0.16 ${h})`, sec:`oklch(50% 0.09 ${h})`, tagfill:`oklch(96.5% 0.02 ${h})`,
+                    bqbg:`oklch(96% 0.02 ${h})`, codebg:`color-mix(in srgb, oklch(50% 0.09 ${h}) 12%, transparent)` });
+  const body = `
+    <hr class="rule">
+    <p class="lede">Run <code>hugo server</code>, then yell at
+       <a href="#">clouds</a> for a living.</p>
+    <ul class="tags"><li><a href="#">design</a></li><li><a href="#">oklch</a></li><li><a href="#">tinycss</a></li></ul>
+    <div class="btns"><a class="p" href="#">Read more</a><a class="s" href="#">Archive</a></div>
+    <blockquote>Two hues, one system — balanced in both themes.</blockquote>`;
+
+  const g = document.getElementById('gallery');
+  for (const [name, hp, hs, used] of combos) {
+    const d = D(hs), l = L(hs);
+    const badge = used
+      ? `<span class="badge ${used.startsWith('out')?'badge--oos':''}">${used}</span>` : "";
+    const el = document.createElement('section');
+    el.className = 'combo';
+    el.innerHTML = `
+      <div class="combo__head">
+        <span class="combo__name">${name}</span>
+        <span class="combo__swatches"><span class="sw" style="background:${priBase(hp)}"></span><span class="sw" style="background:${priBase(hs)}"></span></span>
+        <span class="combo__hues">primary ${hp}° · secondary ${hs}°</span>
+        ${badge}
+      </div>
+      <div class="combo__panels">
+        <div class="panel panel--dark"  style="--pri:${priBase(hp)};--sec:${d.sec};--link:${d.link};--tagfill:${d.tagfill};--bqbg:${d.bqbg};--codebg:${d.codebg}">
+          <p class="panel__mode">Dark</p>${body}
+        </div>
+        <div class="panel panel--light" style="--pri:${priBase(hp)};--sec:${l.sec};--link:${l.link};--tagfill:${l.tagfill};--bqbg:${l.bqbg};--codebg:${l.codebg}">
+          <p class="panel__mode">Light</p>${body}
+        </div>
+      </div>`;
+    g.append(el);
+  }
+</script>
+</body></html>

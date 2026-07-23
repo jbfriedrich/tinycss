@@ -107,10 +107,11 @@ Set `data-theme="light"` or `data-theme="dark"` on the html element, or remove i
 style.css                 - The complete framework: design system (tokens, reset,
                             typography, prose, badges) + blog components (header, feed
                             cards, stream, photo grid, gallery, tags, archive, search)
+Colors.md                 - The colour system: palette, per-mode tuning, theory, re-theming
 demo.html                 - Examples of everything
-accessibility-report.js   - Run to check WCAG contrast compliance (node accessibility-report.js,
-                            or deno run --unstable-detect-cjs -A accessibility-report.js)
-accessibility-report.html - Generated report showing pass/fail for all colour combos
+color-examples.html       - Gallery of themeable OKLCH palette combinations (light + dark)
+accessibility-report.js   - WCAG contrast checker — NOTE: predates the OKLCH migration
+                            (HSL, hardcoded old palette); see Colors.md for current validation
 ```
 
 > **Minifying:** there's no pre-built `.min.css` — a project using this framework would
