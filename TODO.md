@@ -29,9 +29,10 @@ system with separate, themeable shadow-colour variables so dark mode can deepen 
 
 ## Accessibility
 
-- [ ] Re-run a full WCAG AA sweep on the OKLCH palette. `accessibility-report.js`
-      predates the migration and parses HSL — either teach it OKLCH or validate with
-      the Deno colour tooling used during the migration (contrast + gamut per stop).
+The OKLCH palette has been swept for WCAG AA (contrast + gamut, both modes,
+including the `--bg-light` content surface) — all combinations pass. The old
+HSL `accessibility-report.js` was retired. When adding or re-theming colours,
+re-validate with an ad-hoc OKLCH contrast+gamut sweep (see `Colors.md`).
 
 ## Photo-grid captions
 

@@ -110,8 +110,6 @@ style.css                 - The complete framework: design system (tokens, reset
 Colors.md                 - The colour system: palette, per-mode tuning, theory, re-theming
 demo.html                 - Examples of everything
 color-examples.html       - Gallery of themeable OKLCH palette combinations (light + dark)
-accessibility-report.js   - WCAG contrast checker — NOTE: predates the OKLCH migration
-                            (HSL, hardcoded old palette); see Colors.md for current validation
 ```
 
 > **Minifying:** there's no pre-built `.min.css` — a project using this framework would
