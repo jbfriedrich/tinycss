@@ -1,61 +1,36 @@
 # The tinycss colour system
 
-A guide to how colour works in tinycss — the theory, the tokens, and the specific
-decisions behind the default palette. If you only remember one thing: **the whole
-palette is generated from two hue angles, in OKLCH, and every shade is chosen so it
-stays legible and in-gamut in both light and dark mode.**
+How colour works in tinycss — first the **palette and how to use it**, then the
+**theory and decisions** behind it. The one-line version: the whole palette is generated
+from two hue angles in **OKLCH**, and every shade is tuned to stay legible (WCAG AA) and
+in-gamut in both light and dark mode.
 
 ---
 
-## 1. Why OKLCH (and not HSL)
+# Part 1 — The palette & how to use it
 
-The palette used to be HSL. It's now **OKLCH** — `oklch(Lightness Chroma Hue)` — and
-the difference matters for one reason: **OKLCH lightness is perceptual, HSL lightness
-is not.**
+## The palette at a glance
 
-In HSL, `hsl(H, 80%, 50%)` is a wildly different *apparent* brightness depending on the
-hue: yellow at 50% looks almost white, blue at 50% looks nearly black. So a single
-"lightness" number can't be trusted, and two accent colours picked at the same HSL
-lightness will never feel balanced.
+Two accents, chosen deliberately (see §*Choosing the secondary* for why):
 
-In OKLCH, `L` is calibrated to human perception. `oklch(62% C H)` looks like the *same
-brightness* whatever the hue. That gives us three things HSL couldn't:
-
-- **Balanced pairs by construction** — pin two accents to the same `L` and neither
-  dominates.
-- **Predictable ramps** — stepping `L` down produces evenly-spaced shades.
-- **Reliable re-theming** — rotate the hue and the palette stays balanced (see §11).
-
-The cost is a modern-browser baseline (OKLCH: Safari 15.4+, Chrome 111+, Firefox 113+).
-That's fine for this project.
-
-> **Honest caveat:** migrating an existing palette from HSL to OKLCH looks *nearly
-> identical* — OKLCH is a better *substrate*, not a new look. The visible gains come
-> from the per-mode *tuning* it makes easy (§5), and from being able to explore new
-> palettes reliably.
-
----
-
-## 2. The two-hue system
-
-Everything derives from two custom properties — **hue angles** on the OKLCH wheel:
+- **Primary — magenta**, OKLCH hue **347°**. The hero: links, buttons, hover, anything
+  you act on. Kept vivid.
+- **Secondary — indigo**, OKLCH hue **227°**. The supporting voice: it contrasts with
+  magenta (cool vs warm) without competing, so magenta stays the star.
 
 ```css
---hue:     347;   /* primary   — magenta/pink */
---alt-hue: 227;   /* secondary — indigo       */
+--hue:     347;   /* primary   — magenta */
+--alt-hue: 227;   /* secondary — indigo  */
 ```
 
-Change those two numbers and the entire palette shifts. (These are OKLCH angles, **not**
-HSL degrees — magenta is 347 here, not 320.) A separate pair, `--surface-hue` /
-`--surface-sat`, tints the background surfaces independently (see §10).
+These are **OKLCH hue angles, not HSL degrees** (magenta is 347 here, not 320). Change
+the two numbers and the whole palette shifts — see *Re-theming*.
 
----
+## The shade ramps
 
-## 3. The shade ramps
-
-Each accent is a 7-stop ramp from `lightest` to `darkest`. Only the **hue** comes from
-the variable; each stop pins its own **lightness (L)** and **chroma (C)**, because the
-amount of chroma a hue can hold changes with lightness (§6).
+Each accent is a 7-stop ramp. Only the **hue** comes from the variable; each stop pins
+its own **lightness (L)** and **chroma (C)**, because how much chroma a hue can hold
+changes with lightness (see §*The sRGB gamut reality*).
 
 **Primary — magenta, hue 347**
 
@@ -81,101 +56,28 @@ amount of chroma a hue can hold changes with lightness (§6).
 | `--secondary-dark` | 25% | 0.049 |
 | `--secondary-darkest` | 15% | 0.044 |
 
-Note the two bases share **L = 62%** (perceptually matched) but carry different chroma:
-magenta 0.250 vs indigo 0.105. That's not an oversight — it's the gamut talking (§6).
+The two bases share **L = 62%** (perceptually matched, so neither dominates) but carry
+different chroma — magenta 0.250 vs indigo 0.105. That gap is the gamut talking, not an
+oversight (§*The sRGB gamut reality*).
 
----
+## Per-mode accent values
 
-## 4. Light vs dark: the same identity, tuned per mode
+The hue never changes between themes; the *tuning* does. These are the actual link/tag
+values, all WCAG-AA verified against the surface they sit on:
 
-The hue never changes between themes — the *tuning* does. The guiding rule:
-
-> **Dark mode can be loud; light mode must be restrained.**
-
-- **Dark mode** sits accents on near-black, which has huge luminance headroom. Saturated
-  colour *glows* here, so we push chroma toward the gamut edge for that neon/synthwave
-  feel. Links use the base primary; hover brightens.
-
-  ```css
-  --link-color:        var(--primary);                  /* oklch(62% .25 347) */
-  --link-hover-color:  oklch(from var(--primary) 0.8 0.13 h);   /* brighter */
-  --link-visited-color: oklch(from var(--primary) 0.6 0.13 h);  /* dimmer, desaturated */
-  ```
-
-- **Light mode** sits accents on near-white, where the *same* saturated colour has low
-  contrast and reads as cheap "candy". So we drop **both lightness and chroma** — an
-  inky, quiet accent that still clears WCAG AA:
-
-  ```css
-  --link-color:        oklch(from var(--primary) 0.52 0.16 h);  /* darker + less chroma */
-  --link-hover-color:  oklch(from var(--primary) 0.44 0.15 h);
-  --link-visited-color: oklch(from var(--primary) 0.46 0.10 h);
-  --secondary:         oklch(0.5 0.09 var(--alt-hue));          /* tags/accents deepened */
-  ```
-
-The lesson worth internalising: **buy light-mode contrast with lightness, not
-saturation.** Carrying dark-mode chroma onto white paper is the single most common
-reason a light theme looks worse than its dark counterpart.
-
----
-
-## 5. The sRGB gamut reality
-
-sRGB can't display every OKLCH colour. Each hue has a **maximum chroma** that also
-depends on lightness — and the ceilings are very uneven:
-
-- **Magenta / red / violet** can be extremely saturated (chroma up past 0.25), and stay
-  saturated even when bright.
-- **Blue / indigo / cyan** hit their ceiling much lower (~0.10–0.20), and it *collapses*
-  as they get lighter — a bright, vivid cyan simply doesn't exist in sRGB.
-
-This is why the palette is shaped the way it is:
-
-- **Magenta is the vivid hero** (base chroma 0.250). **Indigo stays deep and calm**
-  (base chroma 0.105) — not because we wanted it muted, but because 0.25 at that hue
-  would fall outside sRGB. They're matched in *lightness*, which is what makes them feel
-  like equals despite the chroma gap.
-- If you set a chroma a hue can't hold, the browser **gamut-maps** it (quietly clamps
-  chroma) — nothing breaks, it just desaturates. The ramps are tuned to sit just inside
-  the ceilings so this rarely triggers.
-
-> The classic synthwave dream is hot-pink **+ electric cyan**. In sRGB that cyan can't
-> glow next to the magenta — it always reads muted. (A wide-gamut / P3 build could.)
-
----
-
-## 6. Choosing the secondary — colour harmony
-
-With magenta (347°) fixed, where should the secondary sit? Colour theory gives named
-relationships, measured as the hue distance from the primary:
-
-| Relationship | Δ from primary | Character |
+| Role | Dark mode | Light mode |
 |---|---|---|
-| Analogous | ~30–60° | Harmonious, calm — can be *too* similar to distinguish |
-| Triadic | ~120° | Balanced, vibrant |
-| Split-complement | ~150° | High contrast, a bit softer than a full complement |
-| Complement | 180° | Maximum contrast/tension |
+| Link | `oklch(from --primary 0.65 0.24 h)` | `oklch(from --primary 0.52 0.16 h)` |
+| Link hover | `oklch(from --primary 0.80 0.13 h)` | `oklch(from --primary 0.44 0.15 h)` |
+| Link visited | `oklch(from --primary 0.63 0.13 h)` | `oklch(from --primary 0.46 0.10 h)` |
+| Secondary / tags | `--secondary` (62% 0.105) | `oklch(0.5 0.09 --alt-hue)` |
 
-For magenta, the complement is green (~167°). The design tension is **harmony vs.
-distinctness**: an analogous partner (violet ~312°) glows as "one family" but its accents
-blur into the links; a complement (green ~140°) pops hard but veers "watermelon".
+Dark links are lifted to **L65** (not the base L62) because the main content surface,
+`.site-main`, is `--bg-light` (10% grey), where the base would only reach ~4.2:1 — L65
+clears AA at 4.77:1. Light links drop to **L52 and lower chroma** so they read inky, not
+candy, on paper.
 
-The choice landed on **indigo, 227°** — on the *cool arc* that contrasts with the warm
-magenta without competing with it. It lets magenta stay the hero (magenta leads, indigo
-supports), and unlike cyan it holds enough chroma to have body. It was picked from a
-live side-by-side of the whole 167°→227° arc.
-
-**Rules of thumb for picking a secondary:**
-1. Decide the job first — *harmonise* (analogous) or *distinguish* (complement/split).
-2. Check the gamut — a hue that can't hold chroma (blue/cyan) will read muted next to a
-   saturated primary. Pair vivid with vivid, or accept the quieter partner on purpose.
-3. Match lightness, not chroma, to keep the pair balanced.
-
----
-
-## 7. Colour roles — what each colour *means*
-
-Colour carries meaning here, it isn't just decoration. The rule:
+## Colour roles — what each colour *means*
 
 > **Primary (magenta) = action. Secondary (indigo) = orientation & structure.**
 
@@ -188,88 +90,151 @@ Colour carries meaning here, it isn't just decoration. The rule:
 | | Pagination page counter (`Page 3 of 10`) |
 | | Tags, text selection |
 
-Two payoffs: keyboard focus rings in indigo *pop* against the magenta links they
-surround (instead of magenta-on-magenta), and inline code stops being mistaken for a
-link. Nav items stay magenta because they *are* clickable.
+Payoffs: focus rings in indigo *pop* against the magenta links they surround (instead of
+magenta-on-magenta), and inline code stops reading as a link. Nav items stay magenta —
+they *are* clickable.
 
-A related typographic rule — **the "meta eyebrow"**: system-generated metadata (dates,
-reading time, pagination) is set in tracked uppercase (`text-transform: uppercase;
+Related typographic rule, the **"meta eyebrow"**: system-generated metadata (dates,
+reading time, pagination) is set tracked-uppercase (`text-transform: uppercase;
 letter-spacing: 0.08em`) as a quiet label voice. **Authored content stays as written** —
-tags are lowercase (they're the writer's vocabulary, not chrome), and reset their own
+tags are lowercase (the writer's vocabulary, not chrome) and reset their own
 letter-spacing so they don't inherit the eyebrow tracking.
 
----
+## Re-theming
 
-## 8. Relative colours (and the minify trap)
-
-Most per-mode variants are *derived* from `--primary` with relative-colour syntax rather
-than declared as new variables:
-
-```css
---link-hover-color: oklch(from var(--primary) 0.8 0.13 h);
-/*                        ^origin           ^L  ^C   ^keep origin's hue */
-```
-
-`from var(--primary) … h` reads the origin colour and lets you override L/C while keeping
-its hue — so these derivations automatically track any re-theme.
-
-> **Minify trap:** relative-colour syntax depends on **significant spaces**. A naive
-> whitespace-stripping minifier will corrupt `oklch(from … 0.8 0.13 h)`. Always use a
-> **CSS-aware** minifier. (Hugo Pipes' minifier is; verified.)
-
----
-
-## 9. Accessibility & tooling
-
-Every accent is validated to clear **WCAG AA** (4.5:1 for normal text) against the
-surfaces it appears on, and confirmed **in-gamut**, before shipping. The current light
-and dark link/tag colours all land in the 5–9:1 range.
-
-The migration used a small **Deno** script (no Node in this environment) implementing
-OKLCH↔sRGB conversion, WCAG contrast, and a max-in-gamut-chroma solver — so each ramp
-stop could be checked for both contrast and gamut. When adding or re-theming colours,
-re-validate rather than eyeballing: OKLCH makes lightness predictable, but contrast
-against a specific background still has to be measured.
-
----
-
-## 10. Surface tint
-
-Backgrounds are handled separately from accents, via a neutral-by-default knob:
-
-```css
---surface-hue: 0;    --surface-sat: 0%;   /* dark mode: neutral */
-```
-
-Light mode warms them into "paper":
-
-```css
---surface-hue: 40;   --surface-sat: 44%;  /* cream */
-```
-
-The trick: at 100% lightness the tint vanishes, so `--bg-chrome` stays pure white while
-the reading surface is faintly cream. Near white, luminance steps are nearly invisible
-but **hue** contrast survives — so a tinted "paper" reads as distinct from white chrome
-where a slightly-grey panel would just look dated.
-
----
-
-## 11. Re-theming
-
-To shift the whole palette, change the two hue angles:
+Change the two hue angles to shift the whole palette:
 
 ```css
 :root { --hue: 55; --alt-hue: 195; }   /* e.g. amber + teal */
 ```
 
 Because L/C are pinned per stop and only the hue rotates, the new palette stays balanced
-and evenly-stepped automatically — this is the core OKLCH payoff.
+and evenly-stepped automatically — the core OKLCH payoff.
 
-**One caveat:** the per-stop **chroma** values are tuned for the default magenta/indigo.
-A very different hue may hit a lower sRGB ceiling and get gamut-mapped (quietly
-desaturated). For a hue far from the defaults, re-tune the chroma to that hue's ceiling
-(and re-validate contrast) rather than assuming the numbers transfer.
+**Caveat:** the per-stop **chroma** values are tuned for the default magenta/indigo. A
+very different hue may hit a lower sRGB ceiling and get gamut-mapped (quietly
+desaturated). For a hue far from the defaults, re-tune chroma to that hue's ceiling — and
+**re-validate contrast** — rather than assuming the numbers transfer.
 
-In the Hugo theme, a blog can set `params.hue` / `params.altHue` to re-theme per site —
-those are injected as an OKLCH `:root` override *after* the stylesheet so they win the
+In the Hugo theme, a blog can set `params.hue` / `params.altHue` to re-theme per site;
+they're injected as an OKLCH `:root` override *after* the stylesheet so they win the
 cascade.
+
+## Accessibility
+
+Every accent clears **WCAG AA** (≥4.5:1 for normal text) against the surfaces it appears
+on, in both modes, and is confirmed in-gamut. Current lows are ~4.7:1 (dark link/visited
+on the `--bg-light` content surface); most combinations sit 5–9:1.
+
+Re-validate when you add or re-theme colours — OKLCH makes *lightness* predictable, but
+contrast against a specific background still has to be measured, and the elevated
+`--bg-light` surface is the tightest constraint in dark mode.
+
+---
+
+# Part 2 — The theory & decisions
+
+## Why OKLCH (and not HSL)
+
+`oklch(Lightness Chroma Hue)`. The difference from HSL that matters: **OKLCH lightness is
+perceptual, HSL lightness is not.**
+
+In HSL, `hsl(H, 80%, 50%)` is a wildly different *apparent* brightness by hue — yellow at
+50% looks almost white, blue at 50% nearly black. So the "lightness" number can't be
+trusted, and two accents at the same HSL lightness never feel balanced. OKLCH calibrates
+`L` to human perception: `oklch(62% C H)` looks the same brightness at any hue. That buys:
+
+- **Balanced pairs by construction** — same `L` → neither dominates.
+- **Predictable ramps** — stepping `L` gives evenly-spaced shades.
+- **Reliable re-theming** — rotate the hue, the palette stays balanced.
+
+Cost: a modern-browser baseline (Safari 15.4+, Chrome 111+, Firefox 113+). Fine here.
+
+> **Honest caveat:** migrating an existing palette HSL→OKLCH looks *nearly identical* —
+> OKLCH is a better *substrate*, not a new look. The visible gains come from the per-mode
+> *tuning* it makes easy, and from being able to explore new palettes reliably.
+
+## Light vs dark: the same identity, tuned per mode
+
+> **Dark mode can be loud; light mode must be restrained.**
+
+- **Dark** sits accents on near-black, which has huge luminance headroom — saturated
+  colour *glows*, so we push chroma toward the gamut edge for a neon/synthwave feel.
+- **Light** sits accents on near-white, where the *same* saturated colour reads as cheap
+  "candy". So we drop **both lightness and chroma** for an inky, quiet accent that still
+  clears AA.
+
+The lesson: **buy light-mode contrast with lightness, not saturation.** Carrying
+dark-mode chroma onto white paper is the single most common reason a light theme looks
+worse than its dark counterpart.
+
+## The sRGB gamut reality
+
+sRGB can't display every OKLCH colour; each hue has a **maximum chroma** that also depends
+on lightness, and the ceilings are very uneven:
+
+- **Magenta / red / violet** stay saturated even when bright (chroma past 0.25).
+- **Blue / indigo / cyan** cap much lower (~0.10–0.20), and the ceiling *collapses* as
+  they lighten — a bright, vivid cyan doesn't exist in sRGB.
+
+Hence the palette's shape: **magenta is the vivid hero; indigo stays deep and calm** — not
+by preference but because 0.25 at that hue falls outside sRGB. They're matched in
+*lightness*, which is what makes them read as equals despite the chroma gap. Set a chroma
+a hue can't hold and the browser **gamut-maps** it (quietly clamps) — nothing breaks, it
+just desaturates.
+
+> The classic synthwave dream is hot-pink **+ electric cyan**. In sRGB that cyan can't
+> glow next to the magenta — it always reads muted. (A wide-gamut / P3 build could.)
+
+## Choosing the secondary — colour harmony
+
+With magenta (347°) fixed, colour theory gives named relationships by hue distance:
+
+| Relationship | Δ from primary | Character |
+|---|---|---|
+| Analogous | ~30–60° | Harmonious, calm — can be *too* similar to distinguish |
+| Triadic | ~120° | Balanced, vibrant |
+| Split-complement | ~150° | High contrast, softer than a full complement |
+| Complement | 180° | Maximum contrast/tension |
+
+The tension is **harmony vs. distinctness**: analogous violet (~312°) glows as "one
+family" but its accents blur into the links; the green complement (~140–167°) pops hard
+but veers "watermelon". We landed on **indigo, 227°** — on the *cool arc* that contrasts
+with warm magenta without competing, lets magenta lead, and (unlike cyan) holds enough
+chroma to have body. It was chosen from a live side-by-side of the whole 167°→227° arc.
+
+**Rules of thumb for a secondary:** (1) decide the job — *harmonise* (analogous) or
+*distinguish* (complement/split); (2) check the gamut — a hue that can't hold chroma
+reads muted next to a saturated primary; (3) match lightness, not chroma, to stay
+balanced.
+
+## Relative colours (and the minify trap)
+
+Per-mode variants are *derived* from `--primary` rather than declared anew:
+
+```css
+--link-hover-color: oklch(from var(--primary) 0.8 0.13 h);
+/*                        ^origin           ^L  ^C   ^keep origin's hue */
+```
+
+`from var(--primary) … h` reads the origin and overrides L/C while keeping its hue — so
+these track any re-theme automatically.
+
+> **Minify trap:** relative-colour syntax depends on **significant spaces**; a naive
+> whitespace-stripping minifier corrupts `oklch(from … 0.8 0.13 h)`. Always use a
+> **CSS-aware** minifier (Hugo Pipes' is; verified).
+
+## Surface tint
+
+Backgrounds are handled separately from accents, via `--surface-hue` / `--surface-sat`
+(neutral by default; light mode warms them to `40 / 44%` for "paper"). The trick: at 100%
+lightness the tint vanishes, so `--bg-chrome` stays pure white while the reading surface
+is faintly cream. Near white, luminance steps are nearly invisible but **hue** contrast
+survives — so tinted paper reads as distinct from white chrome where a grey panel would
+just look dated.
+
+## Tooling
+
+The migration used a small **Deno** script (no Node here) implementing OKLCH↔sRGB
+conversion, WCAG contrast, and a max-in-gamut-chroma solver, so each ramp stop and accent
+could be checked for both contrast and gamut. Prefer measuring over eyeballing.

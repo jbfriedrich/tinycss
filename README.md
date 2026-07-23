@@ -5,21 +5,29 @@ A CSS foundation I put together for my personal blog and a couple of small websi
 ## What's in here
 
 - **A modern CSS reset** - Cobbled together from various best practices I've found
-- **HSL-based color system** - Easy to customize by changing a couple of hue values
+- **OKLCH-based color system** - Themeable from two hue values; perceptually uniform
 - **Fluid typography** - Font size scales smoothly from 16px on mobile up to 21px on larger screens
 - **Light & dark mode** - Follows your system preference, or set it manually
 - **Prose styling** - Vertical rhythm and spacing for readable long-form content
 
 ## The colors
 
-I'm using an HSL-based system where you just set a primary hue (currently 320, a nice pink/magenta) and a secondary hue (220, a blue). From there, each color gets lighter and darker variants automatically.
+Built in **OKLCH** (perceptually uniform) and **themeable from two hue angles** — a
+primary and a secondary. The default palette is **magenta + indigo**:
 
 ```css
---hue: 320;      /* Primary - pink/magenta */
---alt-hue: 220;  /* Secondary - blue */
+--hue: 347;      /* Primary   - magenta (the hero: links, buttons, hover) */
+--alt-hue: 227;  /* Secondary - indigo  (orientation: focus, code, tags)  */
 ```
 
-Change those two numbers and the whole palette shifts. Each color has variants from lightest to darkest.
+Change those two numbers and the whole palette shifts — each accent gets a 7-stop
+lighter→darker ramp automatically, and because OKLCH lightness is perceptual, a swapped
+hue stays balanced by construction. Light and dark mode share the identity but tune
+lightness/chroma per mode (restrained on paper, neon on black).
+
+These are OKLCH hue *angles*, not HSL degrees. **For the full rationale — why OKLCH, why
+these two colours, the per-mode tuning, gamut limits, colour roles, and how to re-theme —
+see [`Colors.md`](Colors.md).**
 
 ## Typography
 
@@ -49,7 +57,7 @@ See `demo.html` for every one of these on a page.
 
 - **Near white, luminance contrast disappears but hue contrast survives.** A faintly-tinted "paper" surface reads as distinct from white chrome, whereas a slightly-grey chrome just looks dated — the surface-tint tokens lean on this.
 - **The same `rem` is not the same apparent size across fonts.** A sans face with a large x-height looks bigger than a serif at the same size, so UI text and reading text usually want different sizes, not just different families.
-- **Relative colours** (`hsl(from var(--primary) h s 38%)`) derive hover/visited/light-mode variants without extra variables — but they depend on significant spaces, so always minify with a **CSS-aware** tool.
+- **Relative colours** (`oklch(from var(--primary) 0.52 0.16 h)`) derive hover/visited/light-mode variants without extra variables — but they depend on significant spaces, so always minify with a **CSS-aware** tool.
 
 ## Prose styling
 
