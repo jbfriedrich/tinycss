@@ -266,16 +266,25 @@ ol[role='list'] {
   --prose-space-heading-below: calc(var(--prose-rhythm) * 0.5); /* 0.5 lines below headings */
   --prose-space-list-item: calc(var(--prose-rhythm) * 0.25);    /* tight spacing between li's */
   --prose-space-block: var(--prose-rhythm);               /* 1 line around blockquotes, pre, figure */
-  /* --- COLOR SYSTEM ---
-   * Built on HSL with two base hues. Change --hue and --alt-hue to re-theme
-   * the entire site. All shades share 80% saturation; only lightness varies.
+  /* --- COLOR SYSTEM (OKLCH) ---
+   * Built in OKLCH (perceptually uniform) on two base hue ANGLES. Change --hue
+   * and --alt-hue to re-theme the whole site. Because OKLCH lightness is
+   * perceptual, every hue lands at the same apparent brightness, so a swapped
+   * hue stays balanced by construction — unlike HSL, where one fixed lightness
+   * looks blinding at yellow and near-black at blue.
    *
-   * Shade scale (lightness %):
-   *   darkest=5%  dark=10%  darker=30%  base=~50%  lighter=70%  light=90%  lightest=95%
+   * Each stop pins its own lightness (L 0-1) and chroma (C); only the hue
+   * varies. Chroma is tuned for the default magenta/blue and tapers at the
+   * extremes to stay inside sRGB; a very different hue may hit the sRGB chroma
+   * ceiling, in which case the browser gamut-maps it (clamps chroma) gracefully.
    *
-   * To re-theme: just change the two hue values below. */
-  --hue: 320;          /* primary hue: magenta/pink */
-  --alt-hue: 220;      /* secondary hue: blue */
+   * Shade scale (OKLCH lightness):
+   *   darkest=15  dark=25  darker=45  base=62  lighter=78  light=90  lightest=96
+   *
+   * NOTE: the oklch(from …) derivations below rely on significant spaces — only
+   * ever minify with a CSS-aware tool (Hugo Pipes' minifier is one). */
+  --hue: 347;          /* primary hue angle: magenta/pink (was HSL 320) */
+  --alt-hue: 227;      /* secondary hue angle: indigo (complement-side of magenta) */
   --tertiary-hue: calc(var(--hue) + 300);  /* unused - reserved for future */
   --accent-hue: calc(var(--hue) + 60);     /* unused - reserved for future */
   /* --- SURFACE TINT ---
@@ -285,22 +294,24 @@ ol[role='list'] {
    * white), which gives "neutral chrome over tinted paper" for free. */
   --surface-hue: 0;
   --surface-sat: 0%;
-  /* Primary palette (magenta at hue 320) */
-  --primary-lightest: hsl(var(--hue),80%,95%);
-  --primary-light: hsl(var(--hue),80%,90%);
-  --primary-lighter: hsl(var(--hue),80%,70%);
-  --primary: hsl(var(--hue),80%,48%);
-  --primary-darker: hsl(var(--hue),80%,30%);
-  --primary-dark: hsl(var(--hue),80%,10%);
-  --primary-darkest: hsl(var(--hue),80%,5%);
-  /* Secondary palette (blue at hue 220) */
-  --secondary-lightest: hsl(var(--alt-hue),80%,95%);
-  --secondary-light: hsl(var(--alt-hue),80%,90%);
-  --secondary-lighter: hsl(var(--alt-hue),80%,70%);
-  --secondary: hsl(var(--alt-hue),80%,50%);
-  --secondary-darker: hsl(var(--alt-hue),80%,30%);
-  --secondary-dark: hsl(var(--alt-hue),80%,10%);
-  --secondary-darkest: hsl(var(--alt-hue),80%,5%);
+  /* Primary palette (magenta at hue 347). L/C per stop; hue from --hue. */
+  --primary-lightest: oklch(96% 0.022 var(--hue));
+  --primary-light:    oklch(90% 0.060 var(--hue));
+  --primary-lighter:  oklch(78% 0.160 var(--hue));
+  --primary:          oklch(62% 0.250 var(--hue));
+  --primary-darker:   oklch(45% 0.185 var(--hue));
+  --primary-dark:     oklch(25% 0.095 var(--hue));
+  --primary-darkest:  oklch(15% 0.055 var(--hue));
+  /* Secondary palette (indigo at hue 227). Blue/indigo's sRGB chroma ceiling is
+   * lower than magenta's and peaks at a higher lightness, so these stops are
+   * tuned for 227 specifically — matched to primary in L, not C. */
+  --secondary-lightest: oklch(96% 0.020 var(--alt-hue));
+  --secondary-light:    oklch(90% 0.050 var(--alt-hue));
+  --secondary-lighter:  oklch(78% 0.120 var(--alt-hue));
+  --secondary:          oklch(62% 0.105 var(--alt-hue));
+  --secondary-darker:   oklch(45% 0.078 var(--alt-hue));
+  --secondary-dark:     oklch(25% 0.049 var(--alt-hue));
+  --secondary-darkest:  oklch(15% 0.044 var(--alt-hue));
   /* Badge text colors - ensures readable contrast on any badge shade */
   --badge-text-on-dark-bg: hsl(0, 0%, 100%);  /* white text for dark badge backgrounds (same in both modes) */
   /* --- SHADOWS ---
@@ -343,7 +354,7 @@ ol[role='list'] {
   --bg-dark: hsl(0, 0%, 0%);
   --bg: hsl(0, 0%, 5%);
   --bg-light: hsl(0, 0%, 10%);
-  --bg-blockquote: var(--primary-dark);
+  --bg-blockquote: var(--secondary-dark);
   /* Text */
   --text: hsl(0, 0%, 95%);
   --text-muted: hsl(0, 0%, 70%);
@@ -361,13 +372,14 @@ ol[role='list'] {
   /* Text selection */
   --selection-bg: var(--secondary-dark);
   --selection-text: var(--text);
-  /* Links: lighter on hover, desaturated when visited */
+  /* Links: base magenta, brighter neon on hover, desaturated when visited.
+   * oklch(from …) keeps the hue tracking --primary so re-theming still works. */
   --link-color: var(--primary);
-  --link-hover-color: hsl(from var(--primary) h s calc(l + 20));
+  --link-hover-color: oklch(from var(--primary) 0.8 0.13 h);
   --link-underline-color: var(--primary);
-  --link-underline-hover-color: hsl(from var(--primary) h s calc(l + 20));
-  --link-visited-color: hsl(from var(--primary) h calc(s - 20) l);
-  --link-visited-underline-color: hsl(from var(--primary) h calc(s - 20) l);
+  --link-underline-hover-color: oklch(from var(--primary) 0.8 0.13 h);
+  --link-visited-color: oklch(from var(--primary) 0.6 0.13 h);
+  --link-visited-underline-color: oklch(from var(--primary) 0.6 0.13 h);
   /* Badge contrast */
   --badge-text-on-light-bg: hsl(0, 0%, 0%);
   /* TODO: Take a look at tertiary and accent colors later */
@@ -387,10 +399,10 @@ ol[role='list'] {
   --bg:        hsl(var(--surface-hue), var(--surface-sat), 95%);
   --bg-light:  hsl(var(--surface-hue), var(--surface-sat), 98.3%);  /* heavier cream on the reading paper: lower L to 97.5% */
   --bg-chrome: hsl(var(--surface-hue), var(--surface-sat), 100%);
-  --bg-blockquote: hsl(var(--hue), 80%, 97%);
-  /* The base --secondary (50% L) washes out as a thin outline on near-white;
+  --bg-blockquote: oklch(96% 0.02 var(--alt-hue));
+  /* The base --secondary (L 62) washes out as a thin outline on near-white;
    * deepen it in light mode (like links) so tags/accents read with weight. */
-  --secondary: hsl(var(--alt-hue), 80%, 40%);
+  --secondary: oklch(0.5 0.09 var(--alt-hue));
   /* Text */
   --text: hsl(0, 0%, 5%);
   --text-muted: hsl(0, 0%, 30%);
@@ -408,15 +420,16 @@ ol[role='list'] {
   /* Text selection */
   --selection-bg: var(--secondary-light);
   --selection-text: var(--text);
-  /* Links: the base --primary (48% L) is too light for WCAG AA on a white
-   * background, so in light mode we darken links to ~38% L (and hover to ~28%).
-   * This keeps normal-size body links >= 4.5:1 across the hue range. */
-  --link-color: hsl(from var(--primary) h s 38%);
-  --link-hover-color: hsl(from var(--primary) h s 28%);
-  --link-underline-color: hsl(from var(--primary) h s 38%);
-  --link-underline-hover-color: hsl(from var(--primary) h s 28%);
-  --link-visited-color: hsl(from var(--primary) h calc(s + 10) 34%);
-  --link-visited-underline-color: hsl(from var(--primary) h calc(s + 10) 34%);
+  /* Links: the base --primary (L 62) is too light for WCAG AA on paper, and
+   * dark mode's saturation reads as "candy" on white — so in light mode we drop
+   * BOTH lightness and chroma. This derives an inky magenta at ~6:1 on white
+   * (hover ~8.5:1), muted on visit. All AA for normal-size body text. */
+  --link-color: oklch(from var(--primary) 0.52 0.16 h);
+  --link-hover-color: oklch(from var(--primary) 0.44 0.15 h);
+  --link-underline-color: oklch(from var(--primary) 0.52 0.16 h);
+  --link-underline-hover-color: oklch(from var(--primary) 0.44 0.15 h);
+  --link-visited-color: oklch(from var(--primary) 0.46 0.1 h);
+  --link-visited-underline-color: oklch(from var(--primary) 0.46 0.1 h);
   /* Badge contrast */
   --badge-text-on-light-bg: hsl(0, 0%, 5%);
   /* TODO: Take a look at tertiary and accent colors later */
@@ -479,10 +492,11 @@ pre {
   font-size: .875rem;
 }
 
-/* Inline code */
+/* Inline code — indigo (secondary), NOT the link colour, so code never reads as
+ * a clickable link. Faint secondary wash reinforces the "code chip" look. */
 code {
-  /* background-color: var(--secondary-light); */
-  color: var(--link-color); /* adapts per mode for AA contrast */
+  background-color: color-mix(in srgb, var(--secondary) 12%, transparent);
+  color: var(--secondary);
   padding: var(--space-3xs) var(--space-2xs);
   border-radius: var(--radius-s);
 }
@@ -544,7 +558,7 @@ li + li {
 /* Blockquote styling */
 blockquote {
   background-color: var(--bg-blockquote);
-  border-inline-start: 4px solid var(--primary);
+  border-inline-start: 4px solid var(--secondary);
   border-radius: var(--radius-s);
   padding: var(--space-m);
   font-family: var(--ff-serif);
@@ -911,7 +925,7 @@ blockquote cite {
 /* Focus styles for interactive badges (links, buttons) */
 a.badge:focus-visible,
 button.badge:focus-visible {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--secondary);
   outline-offset: 2px;
 }
 
@@ -919,9 +933,10 @@ button.badge:focus-visible {
    ACCESSIBILITY
    ============================================================================= */
 
-/* Visible focus styles for keyboard navigation */
+/* Visible focus styles for keyboard navigation. Indigo (secondary), not magenta,
+ * so the focus ring stays distinct from the magenta links it surrounds. */
 :focus-visible {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--secondary);
   outline-offset: 2px;
   border-radius: var(--radius-s);
 }
@@ -1301,7 +1316,10 @@ button.badge:focus-visible {
   font: var(--p);
 }
 
-/* Meta footer line: date, reading time, tags. */
+/* Meta footer line: date, reading time, tags. Tracked uppercase eyebrow — the
+ * same "meta label" voice as the single-post meta + pagination. Applied on the
+ * parent so it covers every card type (post/note/link/photo), whose date sits
+ * either bare or inside .entry__meta-main; tags reset their own casing/spacing. */
 .entry__meta {
   display: flex;
   flex-wrap: wrap;
@@ -1309,6 +1327,8 @@ button.badge:focus-visible {
   gap: var(--space-2xs) var(--space-s);
   font-family: var(--ff);
   font-size: var(--fs-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   color: var(--text-muted);
 }
 
@@ -1322,7 +1342,8 @@ button.badge:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 
-/* Keep date / reading-time grouped on the left, push tags to the right. */
+/* Keep date / reading-time grouped on the left, push tags to the right.
+ * (Casing/tracking come from .entry__meta above.) */
 .entry__meta-main {
   display: inline-flex;
   align-items: baseline;
@@ -1407,12 +1428,12 @@ button.badge:focus-visible {
 }
 
 .link-kicker a {
-  color: var(--text-muted);
+  color: var(--secondary);
   text-decoration: none;
 }
 
 .link-kicker a:hover {
-  color: var(--link-hover-color);
+  text-decoration: underline;
 }
 
 /* --- Photo card: cover image + count -------------------------------------- */
@@ -1561,6 +1582,14 @@ button.badge:focus-visible {
   border-block-start: 1px solid var(--border);
 }
 
+/* Tagless posts/pages emit an empty .post-footer; drop its rule + spacing so it
+ * doesn't leave an orphaned border hanging over blank space. */
+.post-footer:not(:has(.taglist)) {
+  margin-block-start: 0;
+  padding-block-start: 0;
+  border-block-start: 0;
+}
+
 /* Authored summary/standfirst for long-form posts: a muted serif lead between
    the header and the body (only shown when frontmatter sets `summary`). The
    wrapper carries the reading-column width (measured in the body's font
@@ -1578,7 +1607,9 @@ button.badge:focus-visible {
   line-height: var(--lh-snug);
 }
 
-/* Post header meta: date / count grouped left, tags pushed to the right. */
+/* Post header meta: date / count grouped left, tags pushed to the right.
+ * Set as a tracked uppercase eyebrow — a quiet "meta label" voice shared with
+ * the pagination. (Tags keep their own lowercase rule.) */
 .post-header__meta {
   display: flex;
   flex-wrap: wrap;
@@ -1586,6 +1617,8 @@ button.badge:focus-visible {
   gap: var(--space-2xs) var(--space-s);
   font-family: var(--ff);
   font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   color: var(--text-muted);
 }
 
@@ -1770,6 +1803,7 @@ button.badge:focus-visible {
   font-size: var(--fs-2xs);
   text-decoration: none;
   text-transform: lowercase;
+  letter-spacing: normal;   /* don't inherit the meta-eyebrow tracking */
 }
 
 /* Don't inherit the global link visited/active colours (avoids the white-on-
@@ -1792,12 +1826,12 @@ button.badge:focus-visible {
 }
 
 /* In light mode a bare outline on near-white reads as washed out; give the
- * chip a faint tonal fill so the blue has body. The 55%/96.5% is the one
+ * chip a faint tonal fill so the blue has body. The L96.5/C0.02 is the one
  * intentionally hand-tuned value left in the system — hue-linked but not
  * derivable from an existing token (softer/lighter than --secondary-lightest).
  * Kept as a documented exception rather than a single-use token. */
 :root[data-theme=light] .tag {
-  background-color: hsl(var(--alt-hue), 55%, 96.5%);
+  background-color: oklch(96.5% 0.02 var(--alt-hue));
 }
 
 /* Light hover must out-specify the fill above; deepen the tint a touch. */
@@ -1833,6 +1867,8 @@ button.badge:focus-visible {
   padding-block-start: var(--space-m);
   border-block-start: 1px solid var(--border);
   font-family: var(--ff);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .pagination a,
@@ -1841,7 +1877,7 @@ button.badge:focus-visible {
 }
 
 .pagination__page {
-  color: var(--text-muted);
+  color: var(--secondary);
 }
 
 /* =============================================================================
